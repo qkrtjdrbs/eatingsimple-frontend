@@ -1,13 +1,16 @@
 import { routes } from "./routes";
 import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
 import NotFound from "./NotFound";
+import Home from "./screens/Home";
+import Header from "./components/Header";
 
 export default function MainRouter() {
   return (
     <Router>
       <Switch>
         <Route path={routes.home} exact>
-          <h1>HOME</h1>
+          <Header />
+          <Home />
         </Route>
         <Route path={routes.login} exact>
           <h1>login</h1>

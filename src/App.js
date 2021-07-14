@@ -1,16 +1,20 @@
 import { ApolloProvider } from "@apollo/client";
 import { client } from "./apollo";
 import { HelmetProvider } from "react-helmet-async";
-import { GlobalStyles } from "./styles";
+import { GlobalStyles, theme } from "./styles";
 import MainRouter from "./Routers";
+import { ThemeProvider } from "styled-components";
+import "./App.css";
 
 function App() {
   return (
     <ApolloProvider client={client}>
-      <GlobalStyles />
-      <HelmetProvider>
-        <MainRouter />
-      </HelmetProvider>
+      <ThemeProvider theme={theme}>
+        <GlobalStyles />
+        <HelmetProvider>
+          <MainRouter />
+        </HelmetProvider>
+      </ThemeProvider>
     </ApolloProvider>
   );
 }
