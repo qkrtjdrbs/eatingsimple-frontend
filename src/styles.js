@@ -3,10 +3,14 @@ import reset from "styled-reset";
 
 export const theme = {
   blue: "#0095f6",
+  red: "#F7323F",
 };
 
 export const GlobalStyles = createGlobalStyle`
     ${reset}
+    body {
+        font-family: "Jua", sans-serif;
+    }
     input {
         all:unset;
     }

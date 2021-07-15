@@ -4,7 +4,6 @@ import { HelmetProvider } from "react-helmet-async";
 import { GlobalStyles, theme } from "./styles";
 import MainRouter from "./Routers";
 import { ThemeProvider } from "styled-components";
-import "./App.css";
 
 function App() {
   return (

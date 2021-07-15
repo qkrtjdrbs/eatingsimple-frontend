@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
 import NotFound from "./NotFound";
 import Home from "./screens/Home";
 import Header from "./components/Header";
+import Login from "./screens/Login";
 
 export default function MainRouter() {
   return (
@@ -13,7 +14,7 @@ export default function MainRouter() {
           <Home />
         </Route>
         <Route path={routes.login} exact>
-          <h1>login</h1>
+          <Login />
         </Route>
         <Route path={routes.signUp} exact>
           <h1>sign up</h1>

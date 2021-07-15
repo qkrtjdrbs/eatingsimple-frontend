@@ -8,6 +8,8 @@ import { routes } from "../routes";
 import FatText from "./FatText";
 import HeaderLoginBtn from "./HeaderLoginBtn";
 import { Link } from "react-router-dom";
+import useMe from "../hooks/useMe";
+import Avatar from "./auth/Avatar";
 
 const HeaderContainer = styled.header`
   width: 100%;
@@ -73,6 +75,7 @@ const HeaderItem = styled.div`
 export default function Header() {
   const [toggleMenu, setToggleMenu] = useState(false);
   const isLoggedIn = useReactiveVar(isLoggedInVar);
+  const { data } = useMe();
   return (
     <HeaderContainer>
       <Wrapper>
@@ -101,7 +104,15 @@ export default function Header() {
             <Link to={routes.home}>모두의 레시피</Link>
           </FatText>
         </HeaderItem>
-        <HeaderItem>{isLoggedIn ? "Avatar" : <HeaderLoginBtn />}</HeaderItem>
+        <HeaderItem>
+          {isLoggedIn ? (
+            <Link to={`/users/${data?.me?.username}`}>
+              <Avatar url={data?.me?.avatar} />
+            </Link>
+          ) : (
+            <HeaderLoginBtn />
+          )}
+        </HeaderItem>
       </Wrapper>
     </HeaderContainer>
   );
