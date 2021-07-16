@@ -7,6 +7,7 @@ const Button = styled.div`
   border: 2px solid black;
   border-radius: 17px;
   font-weight: 700;
+  transition: all 300ms ease;
   &:hover {
     cursor: pointer;
     background-color: ${(props) => props.theme.blue};

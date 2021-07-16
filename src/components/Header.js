@@ -1,9 +1,14 @@
 import { useReactiveVar } from "@apollo/client";
-import { faBars, faTimes } from "@fortawesome/free-solid-svg-icons";
+import {
+  faBars,
+  faPencilAlt,
+  faSignOutAlt,
+  faTimes,
+} from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useState } from "react";
 import styled, { keyframes } from "styled-components";
-import { isLoggedInVar } from "../apollo";
+import { isLoggedInVar, logUserOut } from "../apollo";
 import { routes } from "../routes";
 import FatText from "./FatText";
 import HeaderLoginBtn from "./HeaderLoginBtn";
@@ -28,9 +33,10 @@ const Wrapper = styled.div`
 `;
 
 const MenuBtn = styled.div`
+  transition: 0.5s;
   &:hover {
     cursor: pointer;
-    color: ${(props) => props.theme.blue};
+    color: ${(props) => props.theme.blue} 1s;
   }
 `;
 
@@ -53,15 +59,13 @@ const MenuContainer = styled.div`
   background-color: white;
   border: 1px solid rgba(44, 44, 44, 0.137);
   box-shadow: 2px 0px 1px rgba(44, 44, 44, 0.137);
-  animation-duration: 0.25s;
-  animation-timing-function: ease-out;
-  animation-name: ${slideLeft};
-  animation-fill-mode: forwards;
+  animation: ${slideLeft} 0.25s ease-out forwards;
 `;
 
 const MenuItem = styled.div`
   font-weight: 700;
   border-bottom: 1px solid rgba(44, 44, 44, 0.137);
+  display: flex;
   padding: 15px;
   &:hover {
     color: ${(props) => props.theme.blue};
@@ -70,6 +74,17 @@ const MenuItem = styled.div`
 
 const HeaderItem = styled.div`
   font-size: 20px;
+`;
+
+const Icon = styled.span`
+  margin-right: 10px;
+`;
+
+const LogoutBtn = styled.div`
+  color: ${(props) => props.theme.red};
+  &:hover {
+    cursor: pointer;
+  }
 `;
 
 export default function Header() {
@@ -87,10 +102,21 @@ export default function Header() {
               </MenuBtn>
               <MenuContainer>
                 <MenuItem>
+                  <Icon>
+                    <FontAwesomeIcon icon={faPencilAlt} />
+                  </Icon>
                   <Link to={isLoggedIn ? routes.addRecipe : routes.login}>
                     새 레시피 쓰기
                   </Link>
                 </MenuItem>
+                {isLoggedIn ? (
+                  <MenuItem>
+                    <Icon>
+                      <FontAwesomeIcon icon={faSignOutAlt} />
+                    </Icon>
+                    <LogoutBtn onClick={() => logUserOut()}>로그아웃</LogoutBtn>
+                  </MenuItem>
+                ) : null}
               </MenuContainer>
             </>
           ) : (

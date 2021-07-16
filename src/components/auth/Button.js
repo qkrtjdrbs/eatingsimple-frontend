@@ -1,6 +1,6 @@
 import styled from "styled-components";
 
-const LoginBtn = styled.button`
+const Button = styled.button`
   display: block;
   width: 100%;
   height: 50px;
@@ -16,4 +16,4 @@ const LoginBtn = styled.button`
   opacity: ${(props) => (props.disabled ? 0.2 : 1)};
 `;
 
-export default LoginBtn;
+export default Button;

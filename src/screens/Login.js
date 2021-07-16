@@ -1,13 +1,13 @@
-import { faUtensils } from "@fortawesome/free-solid-svg-icons";
+import { faUserPlus, faUtensils } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useForm } from "react-hook-form";
-import { useHistory, useLocation } from "react-router-dom";
+import { Link, useHistory, useLocation } from "react-router-dom";
 import styled from "styled-components";
 import AuthLayout from "../components/auth/AuthLayout";
 import FormsContainer from "../components/auth/FormsContainer";
 import Input from "../components/auth/Input";
 import PageTitle from "../components/PageTitle";
-import LoginBtn from "../components/auth/LoginBtn";
+import Button from "../components/auth/Button";
 import { gql } from "@apollo/client/core";
 import { useMutation } from "@apollo/client";
 import { logUserIn } from "../apollo";
@@ -31,6 +31,14 @@ const HomeLink = styled.a`
   display: flex;
   justify-content: center;
   align-items: center;
+`;
+
+const GoToSignUp = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 40px;
+  color: ${(props) => props.theme.blue};
 `;
 
 const LOGIN_MUTATION = gql`
@@ -125,7 +133,7 @@ export default function Login() {
             placeholder="비밀번호"
             hasError={Boolean(errors?.password?.message)}
           />
-          <LoginBtn type="submit" disabled={!formState.isValid || loading}>
+          <Button type="submit" disabled={!formState.isValid || loading}>
             {loading ? (
               <Loader
                 type="Circles"
@@ -137,7 +145,13 @@ export default function Login() {
             ) : (
               "로그인"
             )}
-          </LoginBtn>
+          </Button>
+          <GoToSignUp>
+            <Icon>
+              <FontAwesomeIcon icon={faUserPlus} />
+            </Icon>
+            <Link to={routes.signUp}>회원 가입하러 가기!</Link>
+          </GoToSignUp>
         </form>
       </FormsContainer>
     </AuthLayout>

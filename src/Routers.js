@@ -4,6 +4,7 @@ import NotFound from "./NotFound";
 import Home from "./screens/Home";
 import Header from "./components/Header";
 import Login from "./screens/Login";
+import SignUp from "./screens/SignUp";
 
 export default function MainRouter() {
   return (
@@ -17,7 +18,7 @@ export default function MainRouter() {
           <Login />
         </Route>
         <Route path={routes.signUp} exact>
-          <h1>sign up</h1>
+          <SignUp />
         </Route>
         <Route path={routes.addRecipe} exact>
           <h1>Add Recipe</h1>

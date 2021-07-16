@@ -8,7 +8,7 @@ function PageTitle({ title }) {
         href="https://fonts.googleapis.com/css2?family=Jua&display=swap"
         rel="stylesheet"
       />
-      <title>모두의 레시피 | {title}</title>
+      <title>{title} | 모두의 레시피</title>
     </Helmet>
   );
 }

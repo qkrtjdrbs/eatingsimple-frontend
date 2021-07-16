@@ -1,15 +1,13 @@
 import styled from "styled-components";
 
 const SNotification = styled.div`
-  min-height: 28px;
-  padding: 6px 12px;
-  margin-bottom: 10px;
-  font-size: 12px;
-  font-weight: 700;
-  letter-spacing: -0.6px;
+  height: 30px;
+  padding: 10px 10px;
+  font-weight: 500;
   text-align: center;
   color: #fff;
-  background-color: #ff6060;
+  width: 100%;
+  background-color: #26cc49;
 `;
 
 export default function SignUpNotification({ children }) {
