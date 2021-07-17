@@ -33,6 +33,7 @@ const Wrapper = styled.div`
 `;
 
 const MenuBtn = styled.div`
+  width: 30px;
   transition: 0.5s;
   &:hover {
     cursor: pointer;
@@ -54,7 +55,8 @@ const MenuContainer = styled.div`
   height: auto;
   position: fixed;
   left: 0;
-  top: 75px;
+  top: 79px;
+  z-index: 9999;
   padding: 20px;
   background-color: white;
   border: 1px solid rgba(44, 44, 44, 0.137);
