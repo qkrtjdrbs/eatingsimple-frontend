@@ -5,6 +5,7 @@ import Home from "./screens/Home";
 import Header from "./components/Header";
 import Login from "./screens/Login";
 import SignUp from "./screens/SignUp";
+import SearchedRecipes from "./screens/SearchedRecipes";
 
 export default function MainRouter() {
   return (
@@ -32,7 +33,10 @@ export default function MainRouter() {
         <Route path={`/users/:username`} exact>
           <h1>user</h1>
         </Route>
-        <Route path={`/search/:keyword`} exact>
+        <Route path={`/search/recipes/:keyword`} exact>
+          <SearchedRecipes />
+        </Route>
+        <Route path={`/search/users/:keyword`} exact>
           <h1>recipes & users</h1>
         </Route>
         <Route>
