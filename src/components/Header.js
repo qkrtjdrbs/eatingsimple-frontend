@@ -18,6 +18,7 @@ import Avatar from "./auth/Avatar";
 
 const HeaderContainer = styled.header`
   width: 100%;
+  height: 80px;
   padding: 18px 0px;
   display: flex;
   align-items: center;
@@ -37,7 +38,7 @@ const MenuBtn = styled.div`
   transition: 0.5s;
   &:hover {
     cursor: pointer;
-    color: ${(props) => props.theme.blue} 1s;
+    color: ${(props) => props.theme.blue};
   }
 `;
 
@@ -55,7 +56,7 @@ const MenuContainer = styled.div`
   height: auto;
   position: fixed;
   left: 0;
-  top: 79px;
+  top: 80px;
   z-index: 9999;
   padding: 20px;
   background-color: white;
@@ -134,7 +135,7 @@ export default function Header() {
         </HeaderItem>
         <HeaderItem>
           {isLoggedIn ? (
-            <Link to={`/users/${data?.me?.username}`}>
+            <Link to={`/user/${data?.me?.username}`}>
               <Avatar url={data?.me?.avatar} />
             </Link>
           ) : (

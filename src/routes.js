@@ -4,4 +4,6 @@ export const routes = {
   login: "/login",
   recipes: "/recipes",
   addRecipe: "/add-recipe",
+  recentRecipes: "/recipes/recent",
+  recommandedRecipes: "/recipes/recommand",
 };

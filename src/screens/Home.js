@@ -1,17 +1,19 @@
-import styled from "styled-components";
+import styled, { keyframes } from "styled-components";
 import { Foods } from "../components/Foods";
 import PageTitle from "../components/PageTitle";
 import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
-import { faSearch } from "@fortawesome/free-solid-svg-icons";
+import { faArrowRight, faSearch } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useForm } from "react-hook-form";
-import { useHistory } from "react-router-dom";
+import { Link, useHistory } from "react-router-dom";
+import { routes } from "../routes";
 
 const Billboard = styled.div`
   position: relative;
   height: 500px;
+  margin-bottom: 80px;
 `;
 const Image = styled.img`
   height: 500px;
@@ -26,7 +28,8 @@ const SearchBoard = styled.div`
   height: 70px;
   width: 500px;
   margin: -35px 0 0 -250px;
-  border: 2px solid black;
+  border: 5px solid black;
+  border-radius: 25px;
   background-color: white;
 `;
 const Search = styled.input`
@@ -37,9 +40,58 @@ const Search = styled.input`
 `;
 const Button = styled.button`
   border: none;
+  color: ${(props) => !props.disabled && props.theme.red};
   &:hover {
     cursor: pointer;
   }
+`;
+const BelowBox = styled.div`
+  width: 100%;
+  height: 500px;
+  position: relative;
+`;
+const Suggestion = styled.div`
+  font-size: 50px;
+  position: absolute;
+  top: 20%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+`;
+
+const wiggle = keyframes`
+   0% { transform: rotate(0deg); }
+   80% { transform: rotate(0deg); }
+   85% { transform: rotate(5deg); }
+   95% { transform: rotate(-5deg); }
+  100% { transform: rotate(0deg); }
+`;
+
+const GoToRecipes = styled.div`
+  position: absolute;
+  top: 45%;
+  left: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 50px;
+  width: 200px;
+  margin: -25px 0 0 -100px;
+  padding: 10px 15px;
+  background-color: ${(props) => props.theme.red};
+  border-radius: 15px;
+  animation: ${wiggle} 2s infinite;
+  &:hover {
+    cursor: pointer;
+    animation: none;
+  }
+`;
+const Icon = styled.div`
+  color: white;
+  margin-right: 10px;
+`;
+const Span = styled.div`
+  color: white;
+  font-size: 18px;
 `;
 
 export default function Home() {
@@ -90,6 +142,17 @@ export default function Home() {
           </form>
         </SearchBoard>
       </Billboard>
+      <BelowBox>
+        <Suggestion>어떤 레시피들이 있을까?</Suggestion>
+        <Link to={routes.recipes}>
+          <GoToRecipes>
+            <Icon>
+              <FontAwesomeIcon icon={faArrowRight} />
+            </Icon>
+            <Span>레시피 보러가기 😋</Span>
+          </GoToRecipes>
+        </Link>
+      </BelowBox>
     </div>
   );
 }

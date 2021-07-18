@@ -18,8 +18,8 @@ const Button = styled.div`
 
 export default function HeaderLoginBtn() {
   return (
-    <Button>
-      <Link to={routes.login}>로그인</Link>
-    </Button>
+    <Link to={routes.login}>
+      <Button>로그인</Button>
+    </Link>
   );
 }
