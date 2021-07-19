@@ -1,6 +1,6 @@
 import styled from "styled-components";
 import { Link, Route, useLocation } from "react-router-dom";
-import SortingRecipes from "./SortingRecipes";
+import SortingRecipes from "../screens/SortingRecipes";
 import PageTitle from "./PageTitle";
 import Header from "../components/Header";
 
@@ -43,7 +43,7 @@ export default function Recipes() {
           <Link to={`/recipes/recent`}>⚡ 최신순</Link>
         </RecipesSortingLink>
       </RecipesSortingBox>
-      <Route exact path="/recipes/:sorting">
+      <Route path="/recipes/:sorting">
         <SortingRecipes />
       </Route>
     </div>

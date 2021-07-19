@@ -38,7 +38,7 @@ export const client = new ApolloClient({
     //The way of saving on cache.
     typePolicies: {
       User: {
-        keyFields: (obj) => `User:${obj.userName}`,
+        keyFields: (obj) => `User:${obj.username}`,
       },
     },
   }),

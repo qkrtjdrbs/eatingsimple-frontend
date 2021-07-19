@@ -3,8 +3,8 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import styled from "styled-components";
 
 const SAvatar = styled.div`
-  width: 33px;
-  height: 33px;
+  width: 36px;
+  height: 36px;
   box-sizing: border-box;
   border-radius: 50%;
   border-color: black;
@@ -15,8 +15,8 @@ const SAvatar = styled.div`
 `;
 
 const Img = styled.img`
-  width: 33px;
-  height: 33px;
+  width: 36px;
+  height: 36px;
   object-fit: cover;
 `;
 

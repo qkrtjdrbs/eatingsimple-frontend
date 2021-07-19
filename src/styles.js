@@ -4,6 +4,7 @@ import reset from "styled-reset";
 export const theme = {
   blue: "#0095f6",
   red: "#F7323F",
+  yellow: "#F7C93F",
 };
 
 export const GlobalStyles = createGlobalStyle`
