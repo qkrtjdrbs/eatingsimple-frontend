@@ -6,7 +6,10 @@ import { PropTypes } from "prop-types";
 const BulletinBox = styled.div`
   border: 2px solid black;
   padding: 10px 15px;
-  margin: 10px 10%;
+  margin-left: auto;
+  margin-right: auto;
+  margin-bottom: 10px;
+  max-width: 1000px;
   &:hover {
     border-color: ${(props) => props.theme.blue};
   }
@@ -24,10 +27,10 @@ const Username = styled.span`
 `;
 const Title = styled.div`
   margin-left: 10px;
-  font-size: 25px;
-  width: 100%;
+  font-size: 20px;
+  width: 85%;
   border-left: 1px solid gray;
-  padding-left: 10px;
+  padding: 0 10px;
 `;
 const ButtonContainer = styled.div`
   display: flex;
@@ -51,7 +54,16 @@ const Button = styled.div`
 `;
 
 const LikesNComments = styled.div`
-  width: 100px;
+  width: auto;
+  padding: 5px 10px;
+`;
+
+const Created = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  width: auto;
+  opacity: 0.5;
 `;
 
 export default function Bulletin({
@@ -62,7 +74,23 @@ export default function Bulletin({
   commentsCount,
   isMine,
   sorting,
+  createdAt,
 }) {
+  function formatDate(date) {
+    return (
+      date.getFullYear() +
+      "-" +
+      (date.getMonth() + 1) +
+      "-" +
+      date.getDate() +
+      " " +
+      date.getHours() +
+      ":" +
+      date.getMinutes() +
+      ""
+    );
+  }
+  createdAt = new Date(createdAt);
   return (
     <BulletinBox>
       <Author>
@@ -78,6 +106,7 @@ export default function Bulletin({
           <Link to={`/recipes/recent/${id}`}>{title}</Link>
         </Title>
         <ButtonContainer>
+          <Created>{formatDate(createdAt)}</Created>
           <LikesNComments>
             {likes} 💖 | {commentsCount} 💬
           </LikesNComments>
