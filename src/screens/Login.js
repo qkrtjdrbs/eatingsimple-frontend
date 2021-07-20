@@ -82,7 +82,7 @@ export default function Login() {
     }
     if (token) {
       logUserIn(token);
-      history.push("/");
+      history.goBack();
     }
   };
   const [login, { loading }] = useMutation(LOGIN_MUTATION, { onCompleted });

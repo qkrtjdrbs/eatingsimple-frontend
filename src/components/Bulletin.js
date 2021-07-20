@@ -1,7 +1,16 @@
 import styled from "styled-components";
 import Avatar from "./auth/Avatar";
-import { Route, Link } from "react-router-dom";
+import { Route, Link, useHistory } from "react-router-dom";
 import { PropTypes } from "prop-types";
+import Recipe from "./Recipe";
+import { gql, useQuery } from "@apollo/client";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {
+  faHeart as SolidHeart,
+  faCommentDots as SolidComment,
+  faArrowUp,
+} from "@fortawesome/free-solid-svg-icons";
+import { faHeart } from "@fortawesome/free-regular-svg-icons";
 
 const BulletinBox = styled.div`
   border: 2px solid black;
@@ -66,6 +75,48 @@ const Created = styled.div`
   opacity: 0.5;
 `;
 
+const Icons = styled.div`
+  margin: 15px 0px;
+  padding: 10px 20px;
+  width: 100%;
+  display: flex;
+  align-items: center;
+`;
+const Icon = styled.div`
+  cursor: pointer;
+  margin-right: 25px;
+`;
+
+const FatText = styled.span`
+  font-weight: 700;
+  font-size: 33px;
+  margin-right: 5px;
+`;
+
+const SEE_RECIPE_QUERY = gql`
+  query seeRecipe($id: Int!) {
+    seeRecipe(id: $id) {
+      content
+      photos {
+        id
+        file
+      }
+      comments {
+        user {
+          username
+          avatar
+        }
+        payload
+        isMine
+        isLiked
+        likes
+        createdAt
+      }
+      isLiked
+    }
+  }
+`;
+
 export default function Bulletin({
   id,
   title,
@@ -76,6 +127,8 @@ export default function Bulletin({
   sorting,
   createdAt,
 }) {
+  const { data } = useQuery(SEE_RECIPE_QUERY, { variables: { id } });
+  const history = useHistory();
   function formatDate(date) {
     return (
       date.getFullYear() +
@@ -114,7 +167,25 @@ export default function Bulletin({
         </ButtonContainer>
       </Author>
       <Route path={`/recipes/${sorting}/${id}`}>
-        <div>열려라참깨</div>
+        <Recipe {...data?.seeRecipe} />
+        <Icons>
+          <Icon>
+            <FatText>{likes}</FatText>
+            <FontAwesomeIcon
+              style={{ color: data?.seeRecipe?.isLiked ? "tomato" : "inherit" }}
+              size="2x"
+              icon={data?.seeRecipe?.isLiked ? SolidHeart : faHeart}
+            />
+          </Icon>
+          <Icon>
+            <FatText>{commentsCount}</FatText>
+            <FontAwesomeIcon size="2x" icon={SolidComment} color="#0095f6" />
+          </Icon>
+          <Icon onClick={() => history.push(`/recipes/${sorting}`)}>
+            <FatText>접기</FatText>
+            <FontAwesomeIcon size="2x" icon={faArrowUp} color="#F7C93F" />
+          </Icon>
+        </Icons>
       </Route>
     </BulletinBox>
   );
