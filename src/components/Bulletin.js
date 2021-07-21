@@ -3,7 +3,7 @@ import Avatar from "./auth/Avatar";
 import { Route, Link, useHistory } from "react-router-dom";
 import { PropTypes } from "prop-types";
 import Recipe from "./Recipe";
-import { gql, useQuery } from "@apollo/client";
+import { gql, useMutation, useQuery } from "@apollo/client";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faHeart as SolidHeart,
@@ -11,6 +11,7 @@ import {
   faArrowUp,
 } from "@fortawesome/free-solid-svg-icons";
 import { faHeart } from "@fortawesome/free-regular-svg-icons";
+import { isLoggedInVar } from "../apollo";
 
 const BulletinBox = styled.div`
   border: 2px solid black;
@@ -112,7 +113,14 @@ const SEE_RECIPE_QUERY = gql`
         likes
         createdAt
       }
-      isLiked
+    }
+  }
+`;
+
+const TOGGLE_RECIPE_LIKE_MUTATION = gql`
+  mutation toggleRecipeLike($id: Int!) {
+    toggleRecipeLike(id: $id) {
+      ok
     }
   }
 `;
@@ -124,10 +132,40 @@ export default function Bulletin({
   user,
   commentsCount,
   isMine,
+  isLiked,
   sorting,
   createdAt,
 }) {
+  const updateRecipeLike = (cache, result) => {
+    const {
+      data: {
+        toggleRecipeLike: { ok },
+      },
+    } = result;
+    if (ok) {
+      const recipeId = `Recipe:${id}`;
+      cache.modify({
+        id: recipeId,
+        fields: {
+          isLiked(prev) {
+            return !prev;
+          },
+          likes(prev) {
+            if (isLiked) {
+              return prev - 1;
+            }
+            return prev + 1;
+          },
+        },
+      });
+    }
+  };
+  const isLoggedIn = isLoggedInVar();
   const { data } = useQuery(SEE_RECIPE_QUERY, { variables: { id } });
+  const [toggleRecipeLike] = useMutation(TOGGLE_RECIPE_LIKE_MUTATION, {
+    variables: { id },
+    update: updateRecipeLike,
+  });
   const history = useHistory();
   function formatDate(date) {
     return (
@@ -169,12 +207,18 @@ export default function Bulletin({
       <Route path={`/recipes/${sorting}/${id}`}>
         <Recipe {...data?.seeRecipe} />
         <Icons>
-          <Icon>
+          <Icon
+            onClick={
+              isLoggedIn
+                ? toggleRecipeLike
+                : () => alert("로그인 유저만 가능합니다!")
+            }
+          >
             <FatText>{likes}</FatText>
             <FontAwesomeIcon
-              style={{ color: data?.seeRecipe?.isLiked ? "tomato" : "inherit" }}
+              style={{ color: isLiked ? "tomato" : "inherit" }}
               size="2x"
-              icon={data?.seeRecipe?.isLiked ? SolidHeart : faHeart}
+              icon={isLiked ? SolidHeart : faHeart}
             />
           </Icon>
           <Icon>
@@ -201,4 +245,5 @@ Bulletin.propTypes = {
   commentsCount: PropTypes.number.isRequired,
   likes: PropTypes.number.isRequired,
   isMine: PropTypes.bool.isRequired,
+  isLiked: PropTypes.bool.isRequired,
 };

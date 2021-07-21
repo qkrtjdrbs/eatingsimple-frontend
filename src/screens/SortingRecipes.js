@@ -29,6 +29,7 @@ const SEE_RECENT_RECIPES = gql`
       commentsCount
       likes
       isMine
+      isLiked
       createdAt
     }
   }
