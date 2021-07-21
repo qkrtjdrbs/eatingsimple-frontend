@@ -82,11 +82,13 @@ export default function Login() {
     }
     if (token) {
       logUserIn(token);
-      history.goBack();
+      if (location?.state?.back) {
+        history.push(location?.state?.back, { refresh: true });
+      }
+      history.push("/");
     }
   };
   const [login, { loading }] = useMutation(LOGIN_MUTATION, { onCompleted });
-
   const onSubmit = () => {
     if (loading) {
       return;

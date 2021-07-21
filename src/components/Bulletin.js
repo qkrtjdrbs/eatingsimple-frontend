@@ -1,6 +1,6 @@
 import styled from "styled-components";
 import Avatar from "./auth/Avatar";
-import { Route, Link, useHistory } from "react-router-dom";
+import { Route, Link, useHistory, useLocation } from "react-router-dom";
 import { PropTypes } from "prop-types";
 import Recipe from "./Recipe";
 import { gql, useMutation, useQuery } from "@apollo/client";
@@ -12,6 +12,8 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { faHeart } from "@fortawesome/free-regular-svg-icons";
 import { isLoggedInVar } from "../apollo";
+import Comment from "./Comment";
+import parsingDate from "../parsingDate";
 
 const BulletinBox = styled.div`
   border: 2px solid black;
@@ -41,6 +43,7 @@ const Title = styled.div`
   width: 85%;
   border-left: 1px solid gray;
   padding: 0 10px;
+  word-break: break-all;
 `;
 const ButtonContainer = styled.div`
   display: flex;
@@ -94,6 +97,19 @@ const FatText = styled.span`
   margin-right: 5px;
 `;
 
+const Comments = styled.div`
+  margin: 15px 0px;
+  padding: 10px 20px;
+  width: 100%;
+`;
+
+const NoComments = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0.4;
+`;
+
 const SEE_RECIPE_QUERY = gql`
   query seeRecipe($id: Int!) {
     seeRecipe(id: $id) {
@@ -103,6 +119,7 @@ const SEE_RECIPE_QUERY = gql`
         file
       }
       comments {
+        id
         user {
           username
           avatar
@@ -167,21 +184,10 @@ export default function Bulletin({
     update: updateRecipeLike,
   });
   const history = useHistory();
-  function formatDate(date) {
-    return (
-      date.getFullYear() +
-      "-" +
-      (date.getMonth() + 1) +
-      "-" +
-      date.getDate() +
-      " " +
-      date.getHours() +
-      ":" +
-      date.getMinutes() +
-      ""
-    );
+  const location = useLocation();
+  if (location?.state?.refresh) {
+    window.location.reload();
   }
-  createdAt = new Date(createdAt);
   return (
     <BulletinBox>
       <Author>
@@ -197,7 +203,7 @@ export default function Bulletin({
           <Link to={`/recipes/recent/${id}`}>{title}</Link>
         </Title>
         <ButtonContainer>
-          <Created>{formatDate(createdAt)}</Created>
+          <Created>{parsingDate(createdAt)}</Created>
           <LikesNComments>
             {likes} 💖 | {commentsCount} 💬
           </LikesNComments>
@@ -230,6 +236,15 @@ export default function Bulletin({
             <FontAwesomeIcon size="2x" icon={faArrowUp} color="#F7C93F" />
           </Icon>
         </Icons>
+        <Comments>
+          {commentsCount !== 0 ? (
+            data?.seeRecipe?.comments.map((comment) => (
+              <Comment key={comment.id} {...comment} />
+            ))
+          ) : (
+            <NoComments>아직 작성된 댓글이 없어요</NoComments>
+          )}
+        </Comments>
       </Route>
     </BulletinBox>
   );

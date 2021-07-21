@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { useHistory, useLocation } from "react-router-dom";
 import styled from "styled-components";
 import { routes } from "../routes";
 
@@ -17,9 +17,13 @@ const Button = styled.div`
 `;
 
 export default function HeaderLoginBtn() {
+  const history = useHistory();
+  const location = useLocation();
   return (
-    <Link to={routes.login}>
-      <Button>로그인</Button>
-    </Link>
+    <Button
+      onClick={() => history.push(routes.login, { back: location.pathname })}
+    >
+      로그인
+    </Button>
   );
 }
