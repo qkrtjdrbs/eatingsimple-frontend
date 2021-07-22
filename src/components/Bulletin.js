@@ -239,7 +239,7 @@ export default function Bulletin({
         <Comments>
           {commentsCount !== 0 ? (
             data?.seeRecipe?.comments.map((comment) => (
-              <Comment key={comment.id} {...comment} />
+              <Comment key={comment.id} recipeId={id} {...comment} />
             ))
           ) : (
             <NoComments>아직 작성된 댓글이 없어요</NoComments>

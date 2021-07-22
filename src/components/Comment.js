@@ -3,6 +3,11 @@ import styled from "styled-components";
 import parsingDate from "../parsingDate";
 import Avatar from "./auth/Avatar";
 import { Link } from "react-router-dom";
+import gql from "graphql-tag";
+import { useMutation } from "@apollo/client";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faThumbsUp } from "@fortawesome/free-regular-svg-icons";
+import { faThumbsUp as ColoredThumbsUp } from "@fortawesome/free-solid-svg-icons";
 
 const AvatarBox = styled.div``;
 
@@ -45,9 +50,20 @@ const Button = styled.div`
   }
 `;
 
-const LikesNComments = styled.div`
+const Like = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
   width: auto;
   padding: 5px 10px;
+  font-size: 15px;
+  cursor: pointer;
+`;
+const Likes = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-right: 5px;
 `;
 const Created = styled.div`
   display: flex;
@@ -57,14 +73,90 @@ const Created = styled.div`
   opacity: 0.5;
 `;
 
+const TOGGLE_COMMENT_LIKE = gql`
+  mutation toggleCommentLike($id: Int!) {
+    toggleCommentLike(id: $id) {
+      ok
+    }
+  }
+`;
+const DELETE_COMMENT_MUTATION = gql`
+  mutation deleteComment($id: Int!) {
+    deleteComment(id: $id) {
+      ok
+    }
+  }
+`;
+
 export default function Comment({
+  id,
   user,
   payload,
   isMine,
   isLiked,
   likes,
+  recipeId,
   createdAt,
 }) {
+  const updateCommentLike = (cache, result) => {
+    const {
+      data: {
+        toggleCommentLike: { ok },
+      },
+    } = result;
+    if (ok) {
+      const commentId = `Comment:${id}`;
+      cache.modify({
+        id: commentId,
+        fields: {
+          isLiked(prev) {
+            return !prev;
+          },
+          likes(prev) {
+            if (isLiked) {
+              return prev - 1;
+            }
+            return prev + 1;
+          },
+        },
+      });
+    }
+  };
+  const updateCommentDelete = (cache, result) => {
+    const {
+      data: {
+        deleteComment: { ok },
+      },
+    } = result;
+    if (ok) {
+      //delete comment from cache.
+      cache.evict({ id: `Comment:${id}` });
+      //modify comment number.
+      cache.modify({
+        id: `Recipe:${recipeId}`,
+        fields: {
+          commentsCount(prev) {
+            return prev - 1;
+          },
+        },
+      });
+    }
+  };
+
+  const [toggleCommentLike] = useMutation(TOGGLE_COMMENT_LIKE, {
+    variables: { id },
+    update: updateCommentLike,
+  });
+  const [deleteComment] = useMutation(DELETE_COMMENT_MUTATION, {
+    variables: { id },
+    update: updateCommentDelete,
+  });
+
+  const onDeleteClick = () => {
+    if (window.confirm("댓글을 삭제할까요?")) {
+      deleteComment();
+    }
+  };
   return (
     <Author>
       <AvatarBox>
@@ -78,11 +170,18 @@ export default function Comment({
       <Payload>{payload}</Payload>
       <ButtonContainer>
         <Created>{parsingDate(createdAt)}</Created>
-        <LikesNComments>{likes} 💖</LikesNComments>
+        <Like onClick={toggleCommentLike}>
+          <Likes>{likes}</Likes>
+          {isLiked ? (
+            <FontAwesomeIcon icon={ColoredThumbsUp} color={"tomato"} />
+          ) : (
+            <FontAwesomeIcon icon={faThumbsUp} />
+          )}
+        </Like>
         {isMine ? (
           <>
             <Button onClick={() => alert("수정하기")}>🔨</Button>
-            <Button onClick={() => alert("삭제하기")}>❌</Button>
+            <Button onClick={() => onDeleteClick()}>❌</Button>
           </>
         ) : null}
       </ButtonContainer>

@@ -13,7 +13,7 @@ const RecipesSortingBox = styled.div`
 `;
 const RecipesSortingLink = styled.div`
   padding: 5px 10px;
-  margin-right: 40px;
+  margin: 40px;
   font-size: 30px;
 `;
 

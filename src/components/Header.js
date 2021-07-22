@@ -57,7 +57,7 @@ const MenuContainer = styled.div`
   position: fixed;
   left: 0;
   top: 80px;
-  z-index: 9999;
+  z-index: 99;
   padding: 20px;
   background-color: white;
   border: 1px solid rgba(44, 44, 44, 0.137);

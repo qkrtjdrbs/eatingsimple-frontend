@@ -12,9 +12,11 @@ const Wrapper = styled.div`
 `;
 
 const LoadingBox = styled.div`
-  width: 100%;
+  width: auto;
+  height: auto;
   display: flex;
   justify-content: center;
+  align-items: center;
 `;
 
 const SEE_RECENT_RECIPES = gql`
@@ -42,13 +44,7 @@ export default function SortingRecipes() {
     <Wrapper>
       {loading ? (
         <LoadingBox>
-          <Loader
-            type="Bars"
-            color="#3d66ba"
-            height={50}
-            width={50}
-            timeout={3000}
-          />
+          <Loader type="ThreeDots" color="#0095f6" height={50} width={50} />
         </LoadingBox>
       ) : sorting === "recent" ? (
         data?.seeRecentRecipes?.map((recipe) => (
