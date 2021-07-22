@@ -14,6 +14,7 @@ import { faHeart } from "@fortawesome/free-regular-svg-icons";
 import { isLoggedInVar } from "../apollo";
 import Comment from "./Comment";
 import parsingDate from "../parsingDate";
+import { useForm } from "react-hook-form";
 
 const BulletinBox = styled.div`
   border: 2px solid black;
@@ -109,6 +110,40 @@ const NoComments = styled.div`
   justify-content: center;
   opacity: 0.4;
 `;
+const WriteComment = styled.div`
+  margin: 15px 0px;
+  padding: 10px 20px;
+  width: 100%;
+`;
+const WriteForm = styled.form`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+`;
+
+const Input = styled.input`
+  width: 100%;
+  height: auto;
+  padding: 5px;
+`;
+const SubmitButton = styled.button`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 30px;
+  width: 90px;
+  border: none;
+  padding: 5px 10px;
+  font-size: 15px;
+  font-weight: 700;
+  color: white;
+  border-radius: 15px;
+  background-color: ${(props) => props.theme.blue};
+  opacity: ${(props) => (props.disabled ? "0.4" : "1")};
+  &:hover {
+    cursor: pointer;
+  }
+`;
 
 const SEE_RECIPE_QUERY = gql`
   query seeRecipe($id: Int!) {
@@ -141,9 +176,16 @@ const TOGGLE_RECIPE_LIKE_MUTATION = gql`
     }
   }
 `;
+const WRITE_COMMENT_MUTATION = gql`
+  mutation writeComment($recipeId: Int!, $payload: String!) {
+    writeComment(recipeId: $recipeId, payload: $payload) {
+      ok
+    }
+  }
+`;
 
 export default function Bulletin({
-  id,
+  id: recipeId,
   title,
   likes,
   user,
@@ -160,9 +202,9 @@ export default function Bulletin({
       },
     } = result;
     if (ok) {
-      const recipeId = `Recipe:${id}`;
+      const recipe = `Recipe:${recipeId}`;
       cache.modify({
-        id: recipeId,
+        id: recipe,
         fields: {
           isLiked(prev) {
             return !prev;
@@ -178,9 +220,9 @@ export default function Bulletin({
     }
   };
   const isLoggedIn = isLoggedInVar();
-  const { data } = useQuery(SEE_RECIPE_QUERY, { variables: { id } });
+  const { data } = useQuery(SEE_RECIPE_QUERY, { variables: { id: recipeId } });
   const [toggleRecipeLike] = useMutation(TOGGLE_RECIPE_LIKE_MUTATION, {
-    variables: { id },
+    variables: { id: recipeId },
     update: updateRecipeLike,
   });
   const history = useHistory();
@@ -188,6 +230,29 @@ export default function Bulletin({
   if (location?.state?.refresh) {
     window.location.reload();
   }
+  const onCompleted = () => {
+    window.location.reload();
+  };
+  const [writeComment, { loading }] = useMutation(WRITE_COMMENT_MUTATION, {
+    onCompleted,
+  });
+  const { register, handleSubmit, formState, clearErrors } = useForm({
+    mode: "onChange",
+  });
+  const onVaild = (data) => {
+    const { payload } = data;
+    if (loading) {
+      return;
+    }
+    writeComment({
+      variables: {
+        recipeId,
+        payload,
+      },
+    }).catch((e) => {
+      console.log(e);
+    });
+  };
   return (
     <BulletinBox>
       <Author>
@@ -200,7 +265,7 @@ export default function Bulletin({
           <Link to={`/user/${user.username}`}>{user.username}</Link>
         </Username>
         <Title>
-          <Link to={`/recipes/recent/${id}`}>{title}</Link>
+          <Link to={`/recipes/recent/${recipeId}`}>{title}</Link>
         </Title>
         <ButtonContainer>
           <Created>{parsingDate(createdAt)}</Created>
@@ -210,7 +275,7 @@ export default function Bulletin({
           {isMine ? <Button>수정 / 삭제</Button> : null}
         </ButtonContainer>
       </Author>
-      <Route path={`/recipes/${sorting}/${id}`}>
+      <Route path={`/recipes/${sorting}/${recipeId}`}>
         <Recipe {...data?.seeRecipe} />
         <Icons>
           <Icon
@@ -239,12 +304,28 @@ export default function Bulletin({
         <Comments>
           {commentsCount !== 0 ? (
             data?.seeRecipe?.comments.map((comment) => (
-              <Comment key={comment.id} recipeId={id} {...comment} />
+              <Comment key={comment.id} recipeId={recipeId} {...comment} />
             ))
           ) : (
             <NoComments>아직 작성된 댓글이 없어요</NoComments>
           )}
         </Comments>
+        <WriteComment>
+          <WriteForm onSubmit={handleSubmit(onVaild)}>
+            <Input
+              {...register("payload", { required: true })}
+              type="text"
+              placeholder="자유롭게 댓글을 작성해주세요!"
+              onFocus={() => clearErrors("payload")}
+            />
+            <SubmitButton
+              type="submit"
+              disabled={!formState.isValid || loading}
+            >
+              {loading ? "작성중..." : "작성"}
+            </SubmitButton>
+          </WriteForm>
+        </WriteComment>
       </Route>
     </BulletinBox>
   );

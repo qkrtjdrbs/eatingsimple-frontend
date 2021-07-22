@@ -151,12 +151,12 @@ export default function Comment({
     variables: { id },
     update: updateCommentDelete,
   });
-
   const onDeleteClick = () => {
     if (window.confirm("댓글을 삭제할까요?")) {
       deleteComment();
     }
   };
+
   return (
     <Author>
       <AvatarBox>
