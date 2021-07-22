@@ -72,7 +72,30 @@ const Created = styled.div`
   width: auto;
   opacity: 0.5;
 `;
-
+const SEE_RECIPE_QUERY = gql`
+  query seeRecipe($id: Int!) {
+    seeRecipe(id: $id) {
+      content
+      photos {
+        id
+        file
+      }
+      comments {
+        id
+        user {
+          username
+          avatar
+        }
+        payload
+        isMine
+        isLiked
+        likes
+        createdAt
+      }
+      commentsCount
+    }
+  }
+`;
 const TOGGLE_COMMENT_LIKE = gql`
   mutation toggleCommentLike($id: Int!) {
     toggleCommentLike(id: $id) {
@@ -132,11 +155,17 @@ export default function Comment({
       //delete comment from cache.
       cache.evict({ id: `Comment:${id}` });
       //modify comment number.
-      cache.modify({
-        id: `Recipe:${recipeId}`,
-        fields: {
-          commentsCount(prev) {
-            return prev - 1;
+      const existingComments = cache.readQuery({
+        query: SEE_RECIPE_QUERY,
+        variables: { id: recipeId },
+      });
+      cache.writeQuery({
+        query: SEE_RECIPE_QUERY,
+        variables: { id: recipeId },
+        data: {
+          seeRecipe: {
+            ...existingComments.seeRecipe,
+            commentsCount: existingComments.seeRecipe.commentsCount - 1,
           },
         },
       });

@@ -165,6 +165,7 @@ const SEE_RECIPE_QUERY = gql`
         likes
         createdAt
       }
+      commentsCount
     }
   }
 `;
@@ -179,7 +180,16 @@ const TOGGLE_RECIPE_LIKE_MUTATION = gql`
 const WRITE_COMMENT_MUTATION = gql`
   mutation writeComment($recipeId: Int!, $payload: String!) {
     writeComment(recipeId: $recipeId, payload: $payload) {
-      ok
+      id
+      user {
+        username
+        avatar
+      }
+      payload
+      isMine
+      isLiked
+      likes
+      createdAt
     }
   }
 `;
@@ -189,7 +199,6 @@ export default function Bulletin({
   title,
   likes,
   user,
-  commentsCount,
   isMine,
   isLiked,
   sorting,
@@ -230,13 +239,31 @@ export default function Bulletin({
   if (location?.state?.refresh) {
     window.location.reload();
   }
-  const onCompleted = () => {
-    window.location.reload();
+  const updateComments = (cache, result) => {
+    setValue("payload", "");
+    const {
+      data: { writeComment },
+    } = result;
+    const existingComments = cache.readQuery({
+      query: SEE_RECIPE_QUERY,
+      variables: { id: recipeId },
+    });
+    cache.writeQuery({
+      query: SEE_RECIPE_QUERY,
+      variables: { id: recipeId },
+      data: {
+        seeRecipe: {
+          ...existingComments.seeRecipe,
+          comments: [...existingComments.seeRecipe.comments, writeComment],
+          commentsCount: existingComments.seeRecipe.commentsCount + 1,
+        },
+      },
+    });
   };
   const [writeComment, { loading }] = useMutation(WRITE_COMMENT_MUTATION, {
-    onCompleted,
+    update: updateComments,
   });
-  const { register, handleSubmit, formState, clearErrors } = useForm({
+  const { register, handleSubmit, formState, clearErrors, setValue } = useForm({
     mode: "onChange",
   });
   const onVaild = (data) => {
@@ -249,8 +276,6 @@ export default function Bulletin({
         recipeId,
         payload,
       },
-    }).catch((e) => {
-      console.log(e);
     });
   };
   return (
@@ -270,7 +295,7 @@ export default function Bulletin({
         <ButtonContainer>
           <Created>{parsingDate(createdAt)}</Created>
           <LikesNComments>
-            {likes} 💖 | {commentsCount} 💬
+            {likes} 💖 | {data?.seeRecipe?.commentsCount} 💬
           </LikesNComments>
           {isMine ? <Button>수정 / 삭제</Button> : null}
         </ButtonContainer>
@@ -293,7 +318,7 @@ export default function Bulletin({
             />
           </Icon>
           <Icon>
-            <FatText>{commentsCount}</FatText>
+            <FatText>{data?.seeRecipe?.commentsCount}</FatText>
             <FontAwesomeIcon size="2x" icon={SolidComment} color="#0095f6" />
           </Icon>
           <Icon onClick={() => history.push(`/recipes/${sorting}`)}>
@@ -302,7 +327,7 @@ export default function Bulletin({
           </Icon>
         </Icons>
         <Comments>
-          {commentsCount !== 0 ? (
+          {data?.seeRecipe?.commentsCount !== 0 ? (
             data?.seeRecipe?.comments.map((comment) => (
               <Comment key={comment.id} recipeId={recipeId} {...comment} />
             ))
@@ -338,7 +363,6 @@ Bulletin.propTypes = {
     username: PropTypes.string.isRequired,
     avatar: PropTypes.string,
   }),
-  commentsCount: PropTypes.number.isRequired,
   likes: PropTypes.number.isRequired,
   isMine: PropTypes.bool.isRequired,
   isLiked: PropTypes.bool.isRequired,
