@@ -5,6 +5,7 @@ export const theme = {
   blue: "#0095f6",
   red: "#F7323F",
   yellow: "#F7C93F",
+  green: "#26cc49",
 };
 
 export const GlobalStyles = createGlobalStyle`

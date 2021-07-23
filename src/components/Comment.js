@@ -8,6 +8,8 @@ import { useMutation } from "@apollo/client";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faThumbsUp } from "@fortawesome/free-regular-svg-icons";
 import { faThumbsUp as ColoredThumbsUp } from "@fortawesome/free-solid-svg-icons";
+import { useState } from "react";
+import { useForm } from "react-hook-form";
 
 const AvatarBox = styled.div``;
 
@@ -24,6 +26,16 @@ const Username = styled.span`
   font-size: 20px;
 `;
 const Payload = styled.div`
+  display: flex;
+  align-items: center;
+  margin-left: 10px;
+  font-size: 17px;
+  width: 100%;
+  border-left: 1px solid gray;
+  padding: 0 10px;
+  word-break: break-all;
+`;
+const EditBox = styled.div`
   display: flex;
   align-items: center;
   margin-left: 10px;
@@ -72,6 +84,55 @@ const Created = styled.div`
   width: auto;
   opacity: 0.5;
 `;
+const Input = styled.input`
+  width: 100%;
+  height: 100px;
+  word-break: break-all;
+`;
+const EditForm = styled.form`
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+`;
+const EditButton = styled.button`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 30px;
+  width: 90px;
+  border: none;
+  padding: 5px 10px;
+  font-size: 15px;
+  font-weight: 700;
+  color: white;
+  border-radius: 15px;
+  background-color: ${(props) => props.theme.green};
+  opacity: ${(props) => (props.disabled ? "0.4" : "1")};
+  &:hover {
+    cursor: pointer;
+  }
+  margin-right: 5px;
+`;
+const CancelButton = styled.button`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 30px;
+  width: 90px;
+  border: none;
+  padding: 5px 10px;
+  font-size: 15px;
+  font-weight: 700;
+  color: white;
+  border-radius: 15px;
+  background-color: ${(props) => props.theme.red};
+  opacity: ${(props) => (props.disabled ? "0.4" : "1")};
+  &:hover {
+    cursor: pointer;
+  }
+  margin-right: 5px;
+`;
 const SEE_RECIPE_QUERY = gql`
   query seeRecipe($id: Int!) {
     seeRecipe(id: $id) {
@@ -106,6 +167,13 @@ const TOGGLE_COMMENT_LIKE = gql`
 const DELETE_COMMENT_MUTATION = gql`
   mutation deleteComment($id: Int!) {
     deleteComment(id: $id) {
+      ok
+    }
+  }
+`;
+const EDIT_COMMENT_MUTATION = gql`
+  mutation editComment($id: Int!, $payload: String!) {
+    editComment(id: $id, payload: $payload) {
       ok
     }
   }
@@ -171,7 +239,25 @@ export default function Comment({
       });
     }
   };
-
+  const updateCommentEdit = (cache, result) => {
+    const {
+      data: {
+        editComment: { ok },
+      },
+    } = result;
+    if (ok) {
+      const commentId = `Comment:${id}`;
+      cache.modify({
+        id: commentId,
+        fields: {
+          payload() {
+            return getValues("edit");
+          },
+        },
+      });
+      setToggleEditForm(!toggleEditForm);
+    }
+  };
   const [toggleCommentLike] = useMutation(TOGGLE_COMMENT_LIKE, {
     variables: { id },
     update: updateCommentLike,
@@ -180,12 +266,27 @@ export default function Comment({
     variables: { id },
     update: updateCommentDelete,
   });
+  const [editComment] = useMutation(EDIT_COMMENT_MUTATION);
   const onDeleteClick = () => {
     if (window.confirm("댓글을 삭제할까요?")) {
       deleteComment();
     }
   };
-
+  const { register, handleSubmit, setValue, formState, getValues } = useForm({
+    mode: "onChange",
+  });
+  const onValid = () => {
+    const payload = getValues("edit");
+    editComment({ variables: { id, payload }, update: updateCommentEdit });
+  };
+  const onEditClick = () => {
+    setToggleEditForm(!toggleEditForm);
+    setValue("edit", payload);
+  };
+  const onCancelClick = () => {
+    setToggleEditForm(!toggleEditForm);
+  };
+  const [toggleEditForm, setToggleEditForm] = useState(false);
   return (
     <Author>
       <AvatarBox>
@@ -196,24 +297,42 @@ export default function Comment({
       <Username>
         <Link to={`/user/${user.username}`}>{user.username}</Link>
       </Username>
-      <Payload>{payload}</Payload>
-      <ButtonContainer>
-        <Created>{parsingDate(createdAt)}</Created>
-        <Like onClick={toggleCommentLike}>
-          <Likes>{likes}</Likes>
-          {isLiked ? (
-            <FontAwesomeIcon icon={ColoredThumbsUp} color={"tomato"} />
-          ) : (
-            <FontAwesomeIcon icon={faThumbsUp} />
-          )}
-        </Like>
-        {isMine ? (
-          <>
-            <Button onClick={() => alert("수정하기")}>🔨</Button>
-            <Button onClick={() => onDeleteClick()}>❌</Button>
-          </>
-        ) : null}
-      </ButtonContainer>
+      {toggleEditForm ? (
+        <EditBox>
+          <EditForm onSubmit={handleSubmit(onValid)}>
+            <Input
+              type="text"
+              autoFocus
+              {...register("edit", { required: true })}
+            />
+            <EditButton disabled={!formState.isValid} type="submit">
+              수정
+            </EditButton>
+            <CancelButton onClick={() => onCancelClick()}>취소</CancelButton>
+          </EditForm>
+        </EditBox>
+      ) : (
+        <Payload>{payload}</Payload>
+      )}
+      {toggleEditForm ? null : (
+        <ButtonContainer>
+          <Created>{parsingDate(createdAt)}</Created>
+          <Like onClick={toggleCommentLike}>
+            <Likes>{likes}</Likes>
+            {isLiked ? (
+              <FontAwesomeIcon icon={ColoredThumbsUp} color={"tomato"} />
+            ) : (
+              <FontAwesomeIcon icon={faThumbsUp} />
+            )}
+          </Like>
+          {isMine ? (
+            <>
+              <Button onClick={() => onEditClick()}>🔨</Button>
+              <Button onClick={() => onDeleteClick()}>❌</Button>
+            </>
+          ) : null}
+        </ButtonContainer>
+      )}
     </Author>
   );
 }

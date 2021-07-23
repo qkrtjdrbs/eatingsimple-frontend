@@ -290,7 +290,7 @@ export default function Bulletin({
           <Link to={`/user/${user.username}`}>{user.username}</Link>
         </Username>
         <Title>
-          <Link to={`/recipes/recent/${recipeId}`}>{title}</Link>
+          <Link to={`/recipes/${sorting}/${recipeId}`}>{title}</Link>
         </Title>
         <ButtonContainer>
           <Created>{parsingDate(createdAt)}</Created>
@@ -336,20 +336,24 @@ export default function Bulletin({
           )}
         </Comments>
         <WriteComment>
-          <WriteForm onSubmit={handleSubmit(onVaild)}>
-            <Input
-              {...register("payload", { required: true })}
-              type="text"
-              placeholder="자유롭게 댓글을 작성해주세요!"
-              onFocus={() => clearErrors("payload")}
-            />
-            <SubmitButton
-              type="submit"
-              disabled={!formState.isValid || loading}
-            >
-              {loading ? "작성중..." : "작성"}
-            </SubmitButton>
-          </WriteForm>
+          {isLoggedIn ? (
+            <WriteForm onSubmit={handleSubmit(onVaild)}>
+              <Input
+                {...register("payload", { required: true })}
+                type="text"
+                placeholder="자유롭게 댓글을 작성해주세요!"
+                onFocus={() => clearErrors("payload")}
+              />
+              <SubmitButton
+                type="submit"
+                disabled={!formState.isValid || loading}
+              >
+                {loading ? "작성중..." : "작성"}
+              </SubmitButton>
+            </WriteForm>
+          ) : (
+            <NoComments>댓글을 달려면 먼저 로그인 해주세요!</NoComments>
+          )}
         </WriteComment>
       </Route>
     </BulletinBox>
