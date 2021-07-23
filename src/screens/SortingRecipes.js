@@ -40,6 +40,13 @@ const SEE_RECENT_RECIPES = gql`
 export default function SortingRecipes() {
   const { sorting } = useParams();
   const { data, loading } = useQuery(SEE_RECENT_RECIPES);
+  let bestRecipes = data?.seeRecentRecipes?.slice(
+    0,
+    data?.seeRecentRecipes?.length
+  );
+  bestRecipes?.sort(function (a, b) {
+    return b.likes - a.likes;
+  });
   return (
     <Wrapper>
       {loading ? (
@@ -51,7 +58,9 @@ export default function SortingRecipes() {
           <Bulletin key={recipe.id} sorting={sorting} {...recipe} />
         ))
       ) : (
-        "추천순"
+        bestRecipes?.map((recipe) => (
+          <Bulletin key={recipe.id} sorting={sorting} {...recipe} />
+        ))
       )}
     </Wrapper>
   );
