@@ -1,6 +1,6 @@
 import { useQuery } from "@apollo/client";
 import gql from "graphql-tag";
-import { useParams } from "react-router-dom";
+import { useHistory, useLocation, useParams } from "react-router-dom";
 import styled from "styled-components";
 import Bulletin from "../components/Bulletin";
 import Loader from "react-loader-spinner";
@@ -40,6 +40,12 @@ const SEE_RECENT_RECIPES = gql`
 export default function SortingRecipes() {
   const { sorting } = useParams();
   const { data, loading } = useQuery(SEE_RECENT_RECIPES);
+  const location = useLocation();
+  const history = useHistory();
+  if (location?.state?.id) {
+    history.replace();
+    window.location.reload();
+  }
   let bestRecipes = data?.seeRecentRecipes?.slice(
     0,
     data?.seeRecentRecipes?.length

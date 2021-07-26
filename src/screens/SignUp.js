@@ -15,6 +15,8 @@ import Loader from "react-loader-spinner";
 import { routes } from "../routes";
 import { useState } from "react";
 import { faUser } from "@fortawesome/free-regular-svg-icons";
+import { PhotoContainer } from "../components/PhotoContainer";
+import { NoPhotoNotice } from "../components/NoPhotoNotice";
 
 const Icon = styled.div`
   margin-right: 10px;
@@ -32,22 +34,6 @@ const HomeLink = styled.a`
   justify-content: center;
   align-items: center;
   margin-bottom: 20px;
-`;
-
-const AvatarContainer = styled.div`
-  width: 100%;
-  height: 250px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  flex-direction: column;
-`;
-const Notice = styled.span`
-  background-color: black;
-  color: white;
-  padding: 5px;
-  position: relative;
-  bottom: 100px;
 `;
 const Avatar = styled.img`
   object-fit: contain;
@@ -145,14 +131,14 @@ export default function SignUp() {
           <Title>모두의 레시피</Title>
         </HomeLink>
         {avatar ? (
-          <AvatarContainer>
+          <PhotoContainer>
             <Avatar alt="preview" src={avatar} />
-          </AvatarContainer>
+          </PhotoContainer>
         ) : (
-          <AvatarContainer>
+          <PhotoContainer>
             <FontAwesomeIcon icon={faUser} size="10x" />
-            <Notice>등록된 프로필 사진이 없습니다</Notice>
-          </AvatarContainer>
+            <NoPhotoNotice>등록된 프로필 사진이 없습니다</NoPhotoNotice>
+          </PhotoContainer>
         )}
         <form onSubmit={handleSubmit(onSubmit)}>
           <FormError message={errors?.result?.message} />

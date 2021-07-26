@@ -57,7 +57,7 @@ const Button = styled.div`
   justify-content: center;
   align-items: center;
   height: 30px;
-  width: 90px;
+  width: 50px;
   padding: 5px 10px;
   font-size: 15px;
   border-radius: 15px;
@@ -297,7 +297,7 @@ export default function Bulletin({
           <LikesNComments>
             {likes} 💖 | {data?.seeRecipe?.commentsCount} 💬
           </LikesNComments>
-          {isMine ? <Button>수정 / 삭제</Button> : null}
+          {isMine ? <Button>MY</Button> : null}
         </ButtonContainer>
       </Author>
       <Route path={`/recipes/${sorting}/${recipeId}`}>
