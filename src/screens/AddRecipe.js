@@ -113,7 +113,7 @@ export default function AddRecipe() {
     if (!ok) {
       return setError("result", { message: error });
     }
-    history.push("recipes/recent/", { id });
+    history.push(`/recipes/recent/${id}`, { id });
   };
   const onValid = (data) => {
     if (loading) {

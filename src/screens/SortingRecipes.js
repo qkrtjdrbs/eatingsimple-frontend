@@ -2,7 +2,7 @@ import { useQuery } from "@apollo/client";
 import gql from "graphql-tag";
 import { useHistory, useLocation, useParams } from "react-router-dom";
 import styled from "styled-components";
-import Bulletin from "../components/Bulletin";
+import Post from "../components/Post";
 import Loader from "react-loader-spinner";
 
 const Wrapper = styled.div`
@@ -42,6 +42,7 @@ export default function SortingRecipes() {
   const { data, loading } = useQuery(SEE_RECENT_RECIPES);
   const location = useLocation();
   const history = useHistory();
+  // If you came in after writing a recipe, refresh to load new recipe
   if (location?.state?.id) {
     history.replace();
     window.location.reload();
@@ -61,11 +62,11 @@ export default function SortingRecipes() {
         </LoadingBox>
       ) : sorting === "recent" ? (
         data?.seeRecentRecipes?.map((recipe) => (
-          <Bulletin key={recipe.id} sorting={sorting} {...recipe} />
+          <Post key={recipe.id} sorting={sorting} {...recipe} />
         ))
       ) : (
         bestRecipes?.map((recipe) => (
-          <Bulletin key={recipe.id} sorting={sorting} {...recipe} />
+          <Post key={recipe.id} sorting={sorting} {...recipe} />
         ))
       )}
     </Wrapper>

@@ -5,7 +5,7 @@ import { PropTypes, shape } from "prop-types";
 const ContentBox = styled.div`
   margin: 15px 0px;
   padding: 10px 20px;
-  border-top: 1px solid gray;
+  border-top: 1px solid ${(props) => props.theme.lightGreen};
   .slick-prev:before {
     opacity: 1;
     color: black;

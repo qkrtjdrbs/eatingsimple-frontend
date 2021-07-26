@@ -19,7 +19,7 @@ const Author = styled.div`
   justify-content: flex-start;
   width: 100%;
   padding: 10px 15px;
-  border-bottom: 1px solid gray;
+  border-bottom: 1px solid ${(props) => props.theme.lightGreen};
 `;
 const Username = styled.span`
   margin-left: 8px;

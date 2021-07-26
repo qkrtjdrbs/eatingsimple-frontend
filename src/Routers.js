@@ -34,7 +34,7 @@ export function MainRouter() {
           <h1>recipe</h1>
         </Route>
         <Route path={`/user/:username`} exact>
-          <h1>user</h1>
+          <h1>User</h1>
         </Route>
         <Route path={`/search/recipes/:keyword`} exact>
           <SearchedRecipes />

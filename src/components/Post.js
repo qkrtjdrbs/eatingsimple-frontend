@@ -16,8 +16,9 @@ import Comment from "./Comment";
 import parsingDate from "../parsingDate";
 import { useForm } from "react-hook-form";
 
-const BulletinBox = styled.div`
-  border: 2px solid black;
+const PostBox = styled.div`
+  border: 3px solid ${(props) => props.theme.lightGreen};
+  border-radius: 15px;
   padding: 10px 15px;
   margin-left: auto;
   margin-right: auto;
@@ -194,7 +195,7 @@ const WRITE_COMMENT_MUTATION = gql`
   }
 `;
 
-export default function Bulletin({
+export default function Post({
   id: recipeId,
   title,
   likes,
@@ -279,7 +280,7 @@ export default function Bulletin({
     });
   };
   return (
-    <BulletinBox>
+    <PostBox>
       <Author>
         <AvatarBox>
           <Link to={`/user/${user.username}`}>
@@ -356,11 +357,11 @@ export default function Bulletin({
           )}
         </WriteComment>
       </Route>
-    </BulletinBox>
+    </PostBox>
   );
 }
 
-Bulletin.propTypes = {
+Post.propTypes = {
   id: PropTypes.number.isRequired,
   title: PropTypes.string.isRequired,
   user: PropTypes.shape({
