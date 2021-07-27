@@ -9,6 +9,8 @@ import {
   faHeart as SolidHeart,
   faCommentDots as SolidComment,
   faArrowUp,
+  faTrashAlt,
+  faTools,
 } from "@fortawesome/free-solid-svg-icons";
 import { faHeart } from "@fortawesome/free-regular-svg-icons";
 import { isLoggedInVar } from "../apollo";
@@ -95,7 +97,7 @@ const Icon = styled.div`
 
 const FatText = styled.span`
   font-weight: 700;
-  font-size: 33px;
+  font-size: 30px;
   margin-right: 5px;
 `;
 
@@ -194,6 +196,14 @@ const WRITE_COMMENT_MUTATION = gql`
     }
   }
 `;
+const DELETE_RECIPE_MUTATION = gql`
+  mutation deleteRecipe($id: Int!) {
+    deleteRecipe(id: $id) {
+      ok
+      error
+    }
+  }
+`;
 
 export default function Post({
   id: recipeId,
@@ -264,6 +274,27 @@ export default function Post({
   const [writeComment, { loading }] = useMutation(WRITE_COMMENT_MUTATION, {
     update: updateComments,
   });
+  const onDeleteClick = () => {
+    if (window.confirm("이 레시피를 삭제할까요?")) {
+      deleteRecipe();
+    }
+  };
+  const updateDeleteRecipe = (cache, result) => {
+    const {
+      data: {
+        deleteRecipe: { ok, error },
+      },
+    } = result;
+    if (!ok) {
+      alert(error);
+      return;
+    }
+    cache.evict({ id: `Recipe:${recipeId}` });
+  };
+  const [deleteRecipe] = useMutation(DELETE_RECIPE_MUTATION, {
+    variables: { id: recipeId },
+    update: updateDeleteRecipe,
+  });
   const { register, handleSubmit, formState, clearErrors, setValue } = useForm({
     mode: "onChange",
   });
@@ -322,6 +353,18 @@ export default function Post({
             <FatText>{data?.seeRecipe?.commentsCount}</FatText>
             <FontAwesomeIcon size="2x" icon={SolidComment} color="#0095f6" />
           </Icon>
+          {isMine ? (
+            <Icon>
+              <FatText>수정</FatText>
+              <FontAwesomeIcon size="2x" icon={faTools} color="#26cc49" />
+            </Icon>
+          ) : null}
+          {isMine ? (
+            <Icon onClick={() => onDeleteClick()}>
+              <FatText>삭제</FatText>
+              <FontAwesomeIcon size="2x" icon={faTrashAlt} color="#F7323F" />
+            </Icon>
+          ) : null}
           <Icon onClick={() => history.push(`/recipes/${sorting}`)}>
             <FatText>접기</FatText>
             <FontAwesomeIcon size="2x" icon={faArrowUp} color="#F7C93F" />
