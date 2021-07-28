@@ -1,6 +1,6 @@
 import { useQuery } from "@apollo/client";
 import { useLocation, useParams, useHistory } from "react-router-dom";
-import AddLayout from "../components/AddLayout";
+import AddLayout from "../components/recipeWriteForm/AddLayout";
 import gql from "graphql-tag";
 import styled from "styled-components";
 import ProfileAvatar from "../components/ProfileAvatar";

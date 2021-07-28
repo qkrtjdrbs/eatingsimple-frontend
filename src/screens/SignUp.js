@@ -15,8 +15,8 @@ import Loader from "react-loader-spinner";
 import { routes } from "../routes";
 import { useState } from "react";
 import { faUser } from "@fortawesome/free-regular-svg-icons";
-import { PhotoContainer } from "../components/PhotoContainer";
-import { NoPhotoNotice } from "../components/NoPhotoNotice";
+import { PhotoContainer } from "../components/recipeWriteForm/PhotoContainer";
+import { NoPhotoNotice } from "../components/recipeWriteForm/NoPhotoNotice";
 
 const Icon = styled.div`
   margin-right: 10px;

@@ -9,6 +9,7 @@ import SearchedRecipes from "./screens/SearchedRecipes";
 import Recipes from "./components/Recipes";
 import AddRecipe from "./screens/AddRecipe";
 import Profile from "./screens/Profile";
+import EditRecipe from "./screens/EditRecipe";
 
 export function MainRouter() {
   return (
@@ -32,7 +33,7 @@ export function MainRouter() {
           <Recipes />
         </Route>
         <Route path={`/recipe/:id`} exact>
-          <h1>recipe</h1>
+          <EditRecipe />
         </Route>
         <Route path={`/user/:username`} exact>
           <Header />

@@ -354,10 +354,17 @@ export default function Post({
             <FontAwesomeIcon size="2x" icon={SolidComment} color="#0095f6" />
           </Icon>
           {isMine ? (
-            <Icon>
-              <FatText>수정</FatText>
-              <FontAwesomeIcon size="2x" icon={faTools} color="#26cc49" />
-            </Icon>
+            <Link
+              to={{
+                pathname: `/recipe/${recipeId}`,
+                state: { title, ...data?.seeRecipe },
+              }}
+            >
+              <Icon>
+                <FatText>수정</FatText>
+                <FontAwesomeIcon size="2x" icon={faTools} color="#26cc49" />
+              </Icon>
+            </Link>
           ) : null}
           {isMine ? (
             <Icon onClick={() => onDeleteClick()}>
@@ -396,7 +403,7 @@ export default function Post({
               </SubmitButton>
             </WriteForm>
           ) : (
-            <NoComments>댓글을 달려면 먼저 로그인 해주세요!</NoComments>
+            <NoComments>댓글을 작성하려면 로그인 해주세요!</NoComments>
           )}
         </WriteComment>
       </Route>
@@ -414,4 +421,6 @@ Post.propTypes = {
   likes: PropTypes.number.isRequired,
   isMine: PropTypes.bool.isRequired,
   isLiked: PropTypes.bool.isRequired,
+  sorting: PropTypes.string.isRequired,
+  createdAt: PropTypes.string.isRequired,
 };

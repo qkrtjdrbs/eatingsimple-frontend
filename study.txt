@@ -6,3 +6,5 @@ writeQuery: 사용자의 쿼리에 따라 쿼리의 내용을 실시간으로 �
 배열의 얕은 복사 : 데이터의 원본은 바뀌지 않음. => const dest = example.slice(0, example.length);
 
 img 태그 클릭시 src 정보 뽑아내기 : onClick={(e) => console.log(e.target.currentSrc)}
+
+css opacity는 하위 태그들 까지 전부 영향을 준다

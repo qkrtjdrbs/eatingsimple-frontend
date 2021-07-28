@@ -1,14 +1,11 @@
-import styled from "styled-components";
 import FormsContainer from "../components/auth/FormsContainer";
 import PageTitle from "../components/PageTitle";
-import AddLayout from "../components/AddLayout";
-import Input from "../components/auth/Input";
+import AddLayout from "../components/recipeWriteForm/AddLayout";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
-import { PhotoContainer } from "../components/PhotoContainer";
+import { PhotoContainer } from "../components/recipeWriteForm/PhotoContainer";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faImages } from "@fortawesome/free-solid-svg-icons";
-import { NoPhotoNotice } from "../components/NoPhotoNotice";
 import Loader from "react-loader-spinner";
 import Slider from "react-slick";
 import gql from "graphql-tag";
@@ -16,6 +13,10 @@ import { useMutation } from "@apollo/client";
 import FormError from "../components/auth/FormError";
 import Button from "../components/auth/Button";
 import { useHistory } from "react-router-dom";
+import { Title } from "../components/recipeWriteForm/Title";
+import { Content, ContentBox } from "../components/recipeWriteForm/Content";
+import { Notice, Photo, Photos } from "../components/recipeWriteForm/Photo";
+import HomeLink from "../components/HomeLink";
 
 const CREATE_RECIPE_MUTATION = gql`
   mutation createRecipe($title: String!, $content: String!, $files: [Upload]) {
@@ -25,47 +26,6 @@ const CREATE_RECIPE_MUTATION = gql`
       id
     }
   }
-`;
-
-const ContentBox = styled.div`
-  width: 100%;
-  margin: 15px 0px;
-  padding: 10px 20px;
-  .slick-prev:before {
-    opacity: 1;
-    color: black;
-    left: 0;
-  }
-  .slick-next:before {
-    opacity: 1;
-    color: black;
-  }
-`;
-const Title = styled(Input)`
-  margin-bottom: 10px;
-`;
-const Content = styled.textarea`
-  width: 100%;
-  padding: 10px 15px;
-  margin-bottom: 10px;
-  height: 400px;
-  border: 0.5px solid rgb(219, 219, 219);
-  font-family: "Jua", sans-serif;
-  font-size: 20px;
-  &::placeholder {
-    font-family: "Jua", sans-serif;
-    font-size: 20px;
-  }
-`;
-const Photos = styled(Input)``;
-const Photo = styled.img`
-  object-fit: contain;
-  width: 100%;
-`;
-const Notice = styled(NoPhotoNotice)`
-  background-color: ${(props) => props.theme.red};
-  width: 50%;
-  text-align: center;
 `;
 
 export default function AddRecipe() {
@@ -128,6 +88,7 @@ export default function AddRecipe() {
   return (
     <AddLayout>
       <PageTitle title="레시피 쓰기" />
+      <HomeLink />
       <FormsContainer>
         <form onSubmit={handleSubmit(onValid)}>
           <FormError message={errors?.result?.message} />
