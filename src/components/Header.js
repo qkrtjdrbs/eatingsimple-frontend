@@ -108,7 +108,10 @@ export default function Header() {
                   <Icon>
                     <FontAwesomeIcon icon={faPencilAlt} />
                   </Icon>
-                  <Link to={isLoggedIn ? routes.addRecipe : routes.login}>
+                  <Link
+                    to={isLoggedIn ? routes.addRecipe : routes.login}
+                    onClick={() => setToggleMenu(!toggleMenu)}
+                  >
                     새 레시피 쓰기
                   </Link>
                 </MenuItem>
