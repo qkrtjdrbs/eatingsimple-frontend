@@ -33,7 +33,7 @@ const Email = styled.div`
 const Bio = styled.div`
   font-size: 20px;
   font-weight: 500;
-  height: 60px;
+  height: 50px;
   word-break: break-all;
   margin-bottom: 10px;
 `;

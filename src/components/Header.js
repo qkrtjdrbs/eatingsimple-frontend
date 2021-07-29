@@ -1,9 +1,11 @@
 import { useReactiveVar } from "@apollo/client";
 import {
   faBars,
+  faDrumstickBite,
   faPencilAlt,
   faSignOutAlt,
   faTimes,
+  faUserPlus,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useState } from "react";
@@ -115,6 +117,30 @@ export default function Header() {
                     새 레시피 쓰기
                   </Link>
                 </MenuItem>
+                <MenuItem>
+                  <Icon>
+                    <FontAwesomeIcon icon={faDrumstickBite} size="1x" />
+                  </Icon>
+                  <Link
+                    to={routes.recipes}
+                    onClick={() => setToggleMenu(!toggleMenu)}
+                  >
+                    레시피 보러가기
+                  </Link>
+                </MenuItem>
+                {isLoggedIn ? null : (
+                  <MenuItem>
+                    <Icon>
+                      <FontAwesomeIcon icon={faUserPlus} size="1x" />
+                    </Icon>
+                    <Link
+                      to={routes.signUp}
+                      onClick={() => setToggleMenu(!toggleMenu)}
+                    >
+                      회원 가입
+                    </Link>
+                  </MenuItem>
+                )}
                 {isLoggedIn ? (
                   <MenuItem>
                     <Icon>

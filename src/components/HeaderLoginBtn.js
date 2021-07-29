@@ -3,7 +3,7 @@ import styled from "styled-components";
 import { routes } from "../routes";
 
 const Button = styled.div`
-  padding: 10px 15px;
+  padding: 8px 14px;
   border: 2px solid black;
   border-radius: 17px;
   font-weight: 700;
