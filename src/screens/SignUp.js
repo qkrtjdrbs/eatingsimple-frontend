@@ -185,13 +185,19 @@ export default function SignUp() {
             placeholder="이름"
             hasError={Boolean(errors?.name?.message)}
           />
+          <FormError message={errors?.bio?.message} />
           <Input
             {...register("bio", {
               required: true,
+              maxLength: {
+                value: 60,
+                message: "최대 60자 까지 입력 가능합니다",
+              },
             })}
             type="text"
             onFocus={clearSignUpError}
             placeholder="자신을 간단히 소개해보세요!"
+            hasError={Boolean(errors?.bio?.message)}
           />
           <Button type="submit" disabled={!formState.isValid || loading}>
             {loading ? (

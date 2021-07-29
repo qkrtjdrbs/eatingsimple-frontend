@@ -35,7 +35,7 @@ const Bio = styled.div`
   font-weight: 500;
   height: 50px;
   word-break: break-all;
-  margin-bottom: 10px;
+  margin-bottom: 15px;
 `;
 const RecipeAndComment = styled.div`
   font-size: 20px;
