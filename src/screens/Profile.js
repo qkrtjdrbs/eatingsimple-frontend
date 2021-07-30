@@ -224,29 +224,13 @@ export default function Profile() {
   const onEditUpdate = (cache, result) => {
     const {
       data: {
-        editProfile: { id, email, bio, avatar },
+        editProfile: { id },
       },
     } = result;
     if (!id) {
       setError("result", { message: "프로필 변경에 실패했습니다" });
     } else {
-      //프로필 창 cache 수정
-      const userId = `User:${username}`;
-      cache.modify({
-        id: userId,
-        fields: {
-          email() {
-            return email;
-          },
-          bio() {
-            return bio;
-          },
-          avatar() {
-            return avatar;
-          },
-        },
-      });
-      setToggleEditForm(!toggleEditForm);
+      window.location.reload();
     }
   };
   const [editProfile, { loading }] = useMutation(EDIT_PROFILE_MUTATION, {
