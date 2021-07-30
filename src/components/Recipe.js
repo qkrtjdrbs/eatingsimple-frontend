@@ -22,6 +22,7 @@ const Description = styled.div`
   font-size: 20px;
   margin-bottom: 10px;
   white-space: pre-line;
+  line-height: 1.7rem;
 `;
 const Image = styled.img`
   height: 500px;
