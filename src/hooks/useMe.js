@@ -17,7 +17,6 @@ function useMe() {
   //Just in case the token is broken, ME_QUERY does not use Apollo Client cache.
   const { data } = useQuery(ME_QUERY, {
     skip: !hasToken,
-    fetchPolicy: "no-cache",
   });
   //It works whenever data changes after it is first operated.
   useEffect(() => {

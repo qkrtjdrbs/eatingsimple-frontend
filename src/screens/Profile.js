@@ -11,6 +11,7 @@ import Post from "../components/Post";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import FormError from "../components/auth/FormError";
+import { ME_QUERY } from "../hooks/useMe";
 
 const Layout = styled(AddLayout)``;
 const ProfileBox = styled.div`
@@ -224,13 +225,55 @@ export default function Profile() {
   const onEditUpdate = (cache, result) => {
     const {
       data: {
-        editProfile: { id },
+        editProfile: { id, email, bio, avatar },
       },
     } = result;
     if (!id) {
       setError("result", { message: "프로필 변경에 실패했습니다" });
     } else {
-      window.location.reload();
+      //프로필 창 cache 수정
+      const userId = `User:${username}`;
+      cache.modify({
+        id: userId,
+        fields: {
+          email() {
+            return email;
+          },
+          bio() {
+            return bio;
+          },
+          avatar() {
+            return avatar;
+          },
+        },
+      });
+      const originProfile = cache.readQuery({
+        query: SEE_PROFILE_QUERY,
+      });
+      cache.writeQuery({
+        query: SEE_PROFILE_QUERY,
+        data: {
+          seeProfile: {
+            ...originProfile,
+            email,
+            bio,
+            avatar,
+          },
+        },
+      });
+      const originMe = cache.readQuery({
+        query: ME_QUERY,
+      });
+      cache.writeQuery({
+        query: ME_QUERY,
+        data: {
+          seeProfile: {
+            ...originMe,
+            avatar,
+          },
+        },
+      });
+      setToggleEditForm(!toggleEditForm);
     }
   };
   const [editProfile, { loading }] = useMutation(EDIT_PROFILE_MUTATION, {
