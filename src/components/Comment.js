@@ -21,7 +21,7 @@ const Author = styled.div`
   padding: 10px 15px;
   border-bottom: 1px solid ${(props) => props.theme.lightGreen};
 `;
-const Username = styled.span`
+export const Username = styled.span`
   margin-left: 8px;
   font-size: 20px;
 `;

@@ -5,7 +5,7 @@ import Home from "./screens/Home";
 import Header from "./components/Header";
 import Login from "./screens/Login";
 import SignUp from "./screens/SignUp";
-import SearchedRecipes from "./screens/SearchedRecipes";
+import SearchResult from "./screens/SearchResult";
 import Recipes from "./components/Recipes";
 import AddRecipe from "./screens/AddRecipe";
 import Profile from "./screens/Profile";
@@ -39,8 +39,9 @@ export function MainRouter() {
           <Header />
           <Profile />
         </Route>
-        <Route path={`/search/recipes/:keyword`} exact>
-          <SearchedRecipes />
+        <Route path={`/search/:keyword`}>
+          <Header />
+          <SearchResult />
         </Route>
         <Route>
           <NotFound />

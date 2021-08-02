@@ -55,7 +55,7 @@ const ButtonContainer = styled.div`
   justify-content: flex-end;
   width: 100%;
 `;
-const Button = styled.div`
+export const IsMine = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
@@ -255,6 +255,7 @@ export default function Post({
     const {
       data: { writeComment },
     } = result;
+
     const existingComments = cache.readQuery({
       query: SEE_RECIPE_QUERY,
       variables: { id: recipeId },
@@ -329,7 +330,7 @@ export default function Post({
           <LikesNComments>
             {likes} 💖 | {data?.seeRecipe?.commentsCount} 💬
           </LikesNComments>
-          {isMine ? <Button>MY</Button> : null}
+          {isMine ? <IsMine>MY</IsMine> : null}
         </ButtonContainer>
       </Author>
       <Route path={`/recipes/${sorting}/${recipeId}`}>

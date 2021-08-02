@@ -112,7 +112,7 @@ export default function Home() {
     mode: "onChange",
   });
   const onSubmit = ({ search }) => {
-    history.push(`search/recipes/${search}`);
+    history.push(`search/${search}`);
   };
   const clearSearchError = () => {
     clearErrors("search");

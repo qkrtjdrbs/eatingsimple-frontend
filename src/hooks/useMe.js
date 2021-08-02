@@ -14,7 +14,7 @@ export const ME_QUERY = gql`
 function useMe() {
   const hasToken = useReactiveVar(isLoggedInVar);
   //if not logged in, skip
-  //Just in case the token is broken, ME_QUERY does not use Apollo Client cache.
+  /* We use the network-only method in case the token is broken.*/
   const { data } = useQuery(ME_QUERY, {
     skip: !hasToken,
   });

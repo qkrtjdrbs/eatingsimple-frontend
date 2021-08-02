@@ -11,7 +11,6 @@ import Post from "../components/Post";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import FormError from "../components/auth/FormError";
-import { ME_QUERY } from "../hooks/useMe";
 
 const Layout = styled(AddLayout)``;
 const ProfileBox = styled.div`
@@ -244,32 +243,6 @@ export default function Profile() {
           },
           avatar() {
             return avatar;
-          },
-        },
-      });
-      const originProfile = cache.readQuery({
-        query: SEE_PROFILE_QUERY,
-      });
-      cache.writeQuery({
-        query: SEE_PROFILE_QUERY,
-        data: {
-          seeProfile: {
-            ...originProfile,
-            email,
-            bio,
-            avatar,
-          },
-        },
-      });
-      const originMe = cache.readQuery({
-        query: ME_QUERY,
-      });
-      cache.writeQuery({
-        query: ME_QUERY,
-        data: {
-          seeProfile: {
-            ...originMe,
-            avatar,
           },
         },
       });

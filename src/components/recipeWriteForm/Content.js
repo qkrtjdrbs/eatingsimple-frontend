@@ -23,6 +23,9 @@ export const Content = styled.textarea`
   border: 0.5px solid rgb(219, 219, 219);
   font-family: "Jua", sans-serif;
   font-size: 20px;
+  &:focus {
+    outline-color: ${(props) => props.theme.blue};
+  }
   &::placeholder {
     font-family: "Jua", sans-serif;
     font-size: 20px;
