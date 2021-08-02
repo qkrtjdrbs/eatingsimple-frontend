@@ -8,6 +8,7 @@ import PageTitle from "../components/PageTitle";
 import { IsMine } from "../components/Post";
 import AddLayout from "../components/recipeWriteForm/AddLayout";
 import Post from "../components/Post";
+import Loader from "react-loader-spinner";
 
 const SEARCH_RECIPES_QUERY = gql`
   query searchRecipes($keyword: String!) {
@@ -56,16 +57,23 @@ const NoResult = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
+  font-size: 30px;
   opacity: 0.4;
 `;
 export default function SearchResult() {
   const { keyword } = useParams();
-  const { data: recipeData } = useQuery(SEARCH_RECIPES_QUERY, {
-    variables: { keyword },
-  });
-  const { data: userData } = useQuery(SEARCH_USERS_QUERY, {
-    variables: { keyword },
-  });
+  const { data: recipeData, loading: loadingUsers } = useQuery(
+    SEARCH_RECIPES_QUERY,
+    {
+      variables: { keyword },
+    }
+  );
+  const { data: userData, loading: loadingRecipes } = useQuery(
+    SEARCH_USERS_QUERY,
+    {
+      variables: { keyword },
+    }
+  );
   const location = useLocation();
   if (location?.state?.refresh) {
     window.location.reload();
@@ -78,7 +86,9 @@ export default function SearchResult() {
       </Link>
       <Route path={`/search/${keyword}/users`}>
         <ResultsBox>
-          {userData?.searchUsers?.length ? (
+          {loadingUsers ? (
+            <Loader type="ThreeDots" color="#0095f6" height={50} width={50} />
+          ) : userData?.searchUsers?.length ? (
             userData?.searchUsers?.map((user) => (
               <Users key={user.id}>
                 {" "}
@@ -104,7 +114,9 @@ export default function SearchResult() {
         <Sorting>🍜 레시피 검색 결과 보기</Sorting>
       </Link>
       <Route path={`/search/${keyword}/recipes`}>
-        {recipeData?.searchRecipes?.length ? (
+        {loadingRecipes ? (
+          <Loader type="ThreeDots" color="#0095f6" height={50} width={50} />
+        ) : recipeData?.searchRecipes?.length ? (
           recipeData?.searchRecipes?.map((recipe) => (
             <Post key={recipe.id} sorting="recent" {...recipe} />
           ))
