@@ -8,18 +8,21 @@ import { useMutation } from "@apollo/client";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faThumbsUp } from "@fortawesome/free-regular-svg-icons";
 import { faThumbsUp as ColoredThumbsUp } from "@fortawesome/free-solid-svg-icons";
-import { useState } from "react";
+import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 
 const AvatarBox = styled.div``;
-
+const CommentBox = styled.div`
+  width: 100%;
+  padding: 10px 15px;
+  border-bottom: 1px solid ${(props) => props.theme.lightGreen};
+  margin-bottom: 10px;
+`;
 const Author = styled.div`
   display: flex;
   align-items: center;
   justify-content: flex-start;
-  width: 100%;
-  padding: 10px 15px;
-  border-bottom: 1px solid ${(props) => props.theme.lightGreen};
+  margin-bottom: 13px;
 `;
 export const Username = styled.span`
   margin-left: 8px;
@@ -28,12 +31,12 @@ export const Username = styled.span`
 const Payload = styled.div`
   display: flex;
   align-items: center;
-  margin-left: 10px;
   font-size: 17px;
   width: 100%;
-  border-left: 1px solid gray;
-  padding: 0 10px;
+  padding: 3px;
   word-break: break-all;
+  white-space: pre-line;
+  line-height: 1.5rem;
 `;
 const EditBox = styled.div`
   display: flex;
@@ -288,15 +291,36 @@ export default function Comment({
   };
   const [toggleEditForm, setToggleEditForm] = useState(false);
   return (
-    <Author>
-      <AvatarBox>
-        <Link to={`/user/${user.username}`}>
-          <Avatar url={user.avatar} />
-        </Link>
-      </AvatarBox>
-      <Username>
-        <Link to={`/user/${user.username}`}>{user.username}</Link>
-      </Username>
+    <CommentBox>
+      <Author>
+        <AvatarBox>
+          <Link to={`/user/${user.username}`}>
+            <Avatar url={user.avatar} />
+          </Link>
+        </AvatarBox>
+        <Username>
+          <Link to={`/user/${user.username}`}>{user.username}</Link>
+        </Username>
+        {toggleEditForm ? null : (
+          <ButtonContainer>
+            <Created>{parsingDate(createdAt)}</Created>
+            <Like onClick={toggleCommentLike}>
+              <Likes>{likes}</Likes>
+              {isLiked ? (
+                <FontAwesomeIcon icon={ColoredThumbsUp} color={"tomato"} />
+              ) : (
+                <FontAwesomeIcon icon={faThumbsUp} />
+              )}
+            </Like>
+            {isMine ? (
+              <>
+                <Button onClick={() => onEditClick()}>🔨</Button>
+                <Button onClick={() => onDeleteClick()}>❌</Button>
+              </>
+            ) : null}
+          </ButtonContainer>
+        )}
+      </Author>
       {toggleEditForm ? (
         <EditBox>
           <EditForm onSubmit={handleSubmit(onValid)}>
@@ -314,26 +338,7 @@ export default function Comment({
       ) : (
         <Payload>{payload}</Payload>
       )}
-      {toggleEditForm ? null : (
-        <ButtonContainer>
-          <Created>{parsingDate(createdAt)}</Created>
-          <Like onClick={toggleCommentLike}>
-            <Likes>{likes}</Likes>
-            {isLiked ? (
-              <FontAwesomeIcon icon={ColoredThumbsUp} color={"tomato"} />
-            ) : (
-              <FontAwesomeIcon icon={faThumbsUp} />
-            )}
-          </Like>
-          {isMine ? (
-            <>
-              <Button onClick={() => onEditClick()}>🔨</Button>
-              <Button onClick={() => onDeleteClick()}>❌</Button>
-            </>
-          ) : null}
-        </ButtonContainer>
-      )}
-    </Author>
+    </CommentBox>
   );
 }
 

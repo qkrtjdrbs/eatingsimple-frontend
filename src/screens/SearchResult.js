@@ -58,7 +58,7 @@ const NoResult = styled.div`
   align-items: center;
   justify-content: center;
   font-size: 30px;
-  opacity: 0.4;
+  color: gray;
 `;
 export default function SearchResult() {
   const { keyword } = useParams();
