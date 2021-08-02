@@ -18,20 +18,22 @@ import { Notice, Photo, Photos } from "../components/recipeWriteForm/Photo";
 import { PhotoContainer } from "../components/recipeWriteForm/PhotoContainer";
 import { Title } from "../components/recipeWriteForm/Title";
 import HomeLink from "../components/HomeLink";
+import { faFolderOpen, faFolderPlus } from "@fortawesome/free-solid-svg-icons";
 
 const EditLayout = styled(AddLayout)``;
 const Delete = styled.div`
   font-size: 30px;
   position: absolute;
-  top: 140px;
-  left: 210px;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
   opacity: 0;
 `;
 const ExPhotoBox = styled(ContentBox)`
   position: relative;
   z-index: 9;
   &:hover {
-    .slick-initialized {
+    .slick-current {
       opacity: 0.5;
     }
     ${Delete} {
@@ -128,7 +130,7 @@ export default function EditRecipe() {
     } = e;
     if (
       window.confirm(
-        "사진을 삭제할 경우 복구할 수 없습니다. 정말 사진을 삭제할까요?"
+        "사진을 삭제할 경우 복구할 수 없습니다.\n정말 사진을 삭제할까요?"
       )
     ) {
       await deletePhoto({ variables: { file } });
@@ -172,7 +174,9 @@ export default function EditRecipe() {
             placeholder="레시피에 대한 간단한 설명을 써주세요"
             onFocus={() => clearErrors("result")}
           />
-          <OldAndNew>기존 사진들</OldAndNew>
+          <OldAndNew>
+            <FontAwesomeIcon icon={faFolderOpen} /> 기존 사진들
+          </OldAndNew>
           {exPhotos ? (
             <ExPhotoBox>
               <Slider {...settings}>
@@ -190,7 +194,9 @@ export default function EditRecipe() {
           ) : (
             <NoPhotos>사진이 없어요</NoPhotos>
           )}
-          <OldAndNew>사진 추가</OldAndNew>
+          <OldAndNew>
+            <FontAwesomeIcon icon={faFolderPlus} /> 사진 추가
+          </OldAndNew>
           {newPhotos ? (
             <ContentBox>
               <Slider {...settings}>
