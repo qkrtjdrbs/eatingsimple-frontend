@@ -44,7 +44,6 @@ const EditBox = styled.div`
   margin-left: 10px;
   font-size: 17px;
   width: 100%;
-  border-left: 1px solid gray;
   padding: 0 10px;
   word-break: break-all;
 `;

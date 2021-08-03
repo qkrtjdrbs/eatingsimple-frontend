@@ -255,7 +255,6 @@ export default function Post({
     const {
       data: { writeComment },
     } = result;
-
     const existingComments = cache.readQuery({
       query: SEE_RECIPE_QUERY,
       variables: { id: recipeId },
