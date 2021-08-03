@@ -185,8 +185,6 @@ const EDIT_PROFILE_MUTATION = gql`
   }
 `;
 
-//받은 좋아요 수 추가 ?
-
 export default function Profile() {
   const { username } = useParams();
   const {
@@ -200,6 +198,8 @@ export default function Profile() {
   } = useForm({ mode: "onChange" });
   const [toggleEditForm, setToggleEditForm] = useState(false);
   const { data } = useQuery(SEE_PROFILE_QUERY, { variables: { username } });
+  let hearts = 0;
+  data?.seeProfile?.recipes?.forEach((recipe) => (hearts += recipe.likes));
   const [avatar, setavatar] = useState(null);
   const [newAvatar, setNewAvatar] = useState(null);
   useEffect(() => {
@@ -268,90 +268,99 @@ export default function Profile() {
       setNewAvatar(reader.result);
     };
   };
-  return (
-    <Layout>
-      <PageTitle title={username} />
-      <ProfileBox>
-        {toggleEditForm ? (
-          <>
-            <AvatarBox>
-              <ProfileAvatar url={newAvatar ? newAvatar : avatar} />
-              <AvatarInput
-                type="file"
-                {...register("avatar")}
-                onChange={onChange}
-              />
-            </AvatarBox>
-            <UserInfo>
-              <Username>{data?.seeProfile?.username}</Username>
-              <form onSubmit={handleSubmit(onEditSubmit)}>
-                <FormError message={errors?.result?.message} />
-                <EmailInput
-                  type="email"
-                  placeholder="이메일"
-                  {...register("email")}
-                  onFocus={() => clearErrors("result")}
+  if (!data?.seeProfile?.username)
+    return (
+      <Layout>
+        <PageTitle title="존재하지 않는 유저" />
+        <EmptyRecipe>존재하지 않는 유저입니다</EmptyRecipe>
+      </Layout>
+    );
+  else
+    return (
+      <Layout>
+        <PageTitle title={username} />
+        <ProfileBox>
+          {toggleEditForm ? (
+            <>
+              <AvatarBox>
+                <ProfileAvatar url={newAvatar ? newAvatar : avatar} />
+                <AvatarInput
+                  type="file"
+                  {...register("avatar")}
+                  onChange={onChange}
                 />
-                <FormError message={errors?.bio?.message} />
-                <BioInput
-                  type="text"
-                  placeholder="자신을 간단히 소개해보세요!"
-                  {...register("bio", {
-                    maxLength: {
-                      value: 60,
-                      message: "자기 소개는 최대 60자까지 작성 할 수 있습니다",
-                    },
-                  })}
-                  onFocus={() => clearErrors("result")}
-                  hasError={Boolean(errors?.bio)}
-                />
-                <Buttons>
-                  <ConfirmButton disabled={!formState.isValid || loading}>
-                    완료
-                  </ConfirmButton>
-                  <CancelButton onClick={() => onCancelClick()}>
-                    취소
-                  </CancelButton>
-                </Buttons>
-              </form>
-            </UserInfo>
-          </>
-        ) : (
-          <>
-            <ProfileAvatar url={data?.seeProfile?.avatar} />
-            <UserInfo>
-              <Username>{data?.seeProfile?.username}</Username>
-              <Email>{data?.seeProfile?.email}</Email>
-              <Bio>{data?.seeProfile?.bio}</Bio>
-              <RecipeAndComment>
-                {data?.seeProfile?.recipesCount}🍴 •{" "}
-                {data?.seeProfile?.commentsCount}
-                💬
-              </RecipeAndComment>
-              <CreateDate>{createdDate} 생성</CreateDate>
-            </UserInfo>
-          </>
-        )}
-      </ProfileBox>
-      {data?.seeProfile?.isMe && !toggleEditForm ? (
-        <EditButton onClick={() => onEditClick()}>프로필 수정</EditButton>
-      ) : null}
-      {toggleEditForm ? null : (
-        <UserRecipes>
-          <NoticeBox>
-            <NoticeLine></NoticeLine>
-            <Notice>{data?.seeProfile?.username}님의 레시피</Notice>
-            <NoticeLine></NoticeLine>
-          </NoticeBox>
-          {data?.seeProfile?.recipes?.length > 0 ? (
-            data.seeProfile.recipes.map((recipe) => (
-              <Post key={recipe.id} sorting="recent" {...recipe} />
-            ))
+              </AvatarBox>
+              <UserInfo>
+                <Username>{data?.seeProfile?.username}</Username>
+                <form onSubmit={handleSubmit(onEditSubmit)}>
+                  <FormError message={errors?.result?.message} />
+                  <EmailInput
+                    type="email"
+                    placeholder="이메일"
+                    {...register("email")}
+                    onFocus={() => clearErrors("result")}
+                  />
+                  <FormError message={errors?.bio?.message} />
+                  <BioInput
+                    type="text"
+                    placeholder="자신을 간단히 소개해보세요!"
+                    {...register("bio", {
+                      maxLength: {
+                        value: 60,
+                        message:
+                          "자기 소개는 최대 60자까지 작성 할 수 있습니다",
+                      },
+                    })}
+                    onFocus={() => clearErrors("result")}
+                    hasError={Boolean(errors?.bio)}
+                  />
+                  <Buttons>
+                    <ConfirmButton disabled={!formState.isValid || loading}>
+                      완료
+                    </ConfirmButton>
+                    <CancelButton onClick={() => onCancelClick()}>
+                      취소
+                    </CancelButton>
+                  </Buttons>
+                </form>
+              </UserInfo>
+            </>
           ) : (
-            <EmptyRecipe>작성한 레시피가 없어요 😢</EmptyRecipe>
+            <>
+              <ProfileAvatar url={data?.seeProfile?.avatar} />
+              <UserInfo>
+                <Username>{data?.seeProfile?.username}</Username>
+                <Email>{data?.seeProfile?.email}</Email>
+                <Bio>{data?.seeProfile?.bio}</Bio>
+                <RecipeAndComment>
+                  {hearts}💖 • {data?.seeProfile?.recipesCount}🍴 •{" "}
+                  {data?.seeProfile?.commentsCount}
+                  💬
+                </RecipeAndComment>
+                <CreateDate>{createdDate} 생성</CreateDate>
+              </UserInfo>
+            </>
           )}
-        </UserRecipes>
-      )}
-    </Layout>
-  );
+        </ProfileBox>
+        {data?.seeProfile?.isMe && !toggleEditForm ? (
+          <EditButton onClick={() => onEditClick()}>프로필 수정</EditButton>
+        ) : null}
+        {toggleEditForm ? null : (
+          <UserRecipes>
+            <NoticeBox>
+              <NoticeLine></NoticeLine>
+              <Notice>{data?.seeProfile?.username}님의 레시피</Notice>
+              <NoticeLine></NoticeLine>
+            </NoticeBox>
+            {data?.seeProfile?.recipes?.length > 0 ? (
+              data.seeProfile.recipes.map((recipe) => (
+                <Post key={recipe.id} sorting="recent" {...recipe} />
+              ))
+            ) : (
+              <EmptyRecipe>작성한 레시피가 없어요 😢</EmptyRecipe>
+            )}
+          </UserRecipes>
+        )}
+      </Layout>
+    );
 }
