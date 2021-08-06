@@ -10,6 +10,9 @@ import { faThumbsUp } from "@fortawesome/free-regular-svg-icons";
 import { faThumbsUp as ColoredThumbsUp } from "@fortawesome/free-solid-svg-icons";
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
+import NestedComment from "./NestedComment";
+
+export const DELETED_COMMENT = "[삭제된 댓글입니다]";
 
 const AvatarBox = styled.div``;
 const CommentBox = styled.div`
@@ -94,6 +97,7 @@ const Input = styled.input`
 const SeeReply = styled.div`
   color: ${(props) => props.theme.blue};
   cursor: pointer;
+  margin-top: 10px;
 `;
 const EditForm = styled.form`
   width: 100%;
@@ -234,7 +238,18 @@ export default function Comment({
     } = result;
     if (ok) {
       //delete comment from cache.
-      cache.evict({ id: `Comment:${id}` });
+      if (!nestedCommentsCount) cache.evict({ id: `Comment:${id}` });
+      else {
+        const commentId = `Comment:${id}`;
+        cache.modify({
+          id: commentId,
+          fields: {
+            payload() {
+              return DELETED_COMMENT;
+            },
+          },
+        });
+      }
       //modify comment number.
       const existingComments = cache.readQuery({
         query: SEE_RECIPE_QUERY,
@@ -330,7 +345,7 @@ export default function Comment({
                 <FontAwesomeIcon icon={faThumbsUp} />
               )}
             </Like>
-            {isMine ? (
+            {isMine && payload !== DELETED_COMMENT ? (
               <>
                 <Button onClick={() => onEditClick()}>🔨</Button>
                 <Button onClick={() => onDeleteClick()}>❌</Button>
@@ -355,17 +370,27 @@ export default function Comment({
         </EditBox>
       ) : (
         <PayloadBox>
-          <Payload>{payload}</Payload>
+          {payload === DELETED_COMMENT ? (
+            <Payload style={{ opacity: "0.5" }}>{payload}</Payload>
+          ) : (
+            <Payload>{payload}</Payload>
+          )}
           <Button onClick={() => onClickReply()}>💬</Button>
         </PayloadBox>
       )}
       {toggleReplyForm ? "답댓" : null}
       {nestedCommentsCount ? (
         <SeeReply onClick={() => onSeeReplies()}>
-          답글 {nestedCommentsCount}개 보기
+          {toggleSeeReplies
+            ? "답글 닫기"
+            : `답글 ${nestedCommentsCount}개 보기`}
         </SeeReply>
       ) : null}
-      {toggleSeeReplies ? "답댓글들" : null}
+      {toggleSeeReplies
+        ? nestedComments?.map((comment) => (
+            <NestedComment key={comment.id} {...comment} />
+          ))
+        : null}
     </CommentBox>
   );
 }

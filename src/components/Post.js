@@ -14,7 +14,7 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { faHeart } from "@fortawesome/free-regular-svg-icons";
 import { isLoggedInVar } from "../apollo";
-import Comment from "./Comment";
+import Comment, { DELETED_COMMENT } from "./Comment";
 import parsingDate from "../parsingDate";
 import { useForm } from "react-hook-form";
 
@@ -310,6 +310,10 @@ export default function Post({
   const onVaild = (data) => {
     const { payload } = data;
     if (loading) {
+      return;
+    }
+    if (payload === DELETED_COMMENT) {
+      alert("이 댓글은 작성하실 수 없습니다");
       return;
     }
     writeComment({
