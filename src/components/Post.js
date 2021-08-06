@@ -166,6 +166,15 @@ const SEE_RECIPE_QUERY = gql`
         isMine
         isLiked
         likes
+        nestedComments {
+          id
+          user {
+            username
+            avatar
+          }
+          payload
+        }
+        nestedCommentsCount
         createdAt
       }
       commentsCount

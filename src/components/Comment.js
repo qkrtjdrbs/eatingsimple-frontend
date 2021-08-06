@@ -91,6 +91,10 @@ const Input = styled.input`
   height: 100px;
   word-break: break-all;
 `;
+const SeeReply = styled.div`
+  color: ${(props) => props.theme.blue};
+  cursor: pointer;
+`;
 const EditForm = styled.form`
   width: 100%;
   display: flex;
@@ -134,6 +138,11 @@ const CancelButton = styled.button`
     cursor: pointer;
   }
   margin-right: 5px;
+`;
+const PayloadBox = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 `;
 const SEE_RECIPE_QUERY = gql`
   query seeRecipe($id: Int!) {
@@ -189,6 +198,8 @@ export default function Comment({
   isLiked,
   likes,
   recipeId,
+  nestedComments,
+  nestedCommentsCount,
   createdAt,
 }) {
   const updateCommentLike = (cache, result) => {
@@ -288,7 +299,15 @@ export default function Comment({
   const onCancelClick = () => {
     setToggleEditForm(!toggleEditForm);
   };
+  const onClickReply = () => {
+    setToggleReplyForm(!toggleReplyForm);
+  };
+  const onSeeReplies = () => {
+    setToggleSeeReplies(!toggleSeeReplies);
+  };
   const [toggleEditForm, setToggleEditForm] = useState(false);
+  const [toggleReplyForm, setToggleReplyForm] = useState(false);
+  const [toggleSeeReplies, setToggleSeeReplies] = useState(false);
   return (
     <CommentBox>
       <Author>
@@ -335,8 +354,18 @@ export default function Comment({
           </EditForm>
         </EditBox>
       ) : (
-        <Payload>{payload}</Payload>
+        <PayloadBox>
+          <Payload>{payload}</Payload>
+          <Button onClick={() => onClickReply()}>💬</Button>
+        </PayloadBox>
       )}
+      {toggleReplyForm ? "답댓" : null}
+      {nestedCommentsCount ? (
+        <SeeReply onClick={() => onSeeReplies()}>
+          답글 {nestedCommentsCount}개 보기
+        </SeeReply>
+      ) : null}
+      {toggleSeeReplies ? "답댓글들" : null}
     </CommentBox>
   );
 }
@@ -351,5 +380,16 @@ Comment.propTypes = {
   likes: PropTypes.number.isRequired,
   isMine: PropTypes.bool.isRequired,
   isLiked: PropTypes.bool.isRequired,
+  nestedComments: PropTypes.arrayOf(
+    PropTypes.shape({
+      id: PropTypes.number.isRequired,
+      user: PropTypes.shape({
+        username: PropTypes.string.isRequired,
+        avatar: PropTypes.string,
+      }),
+      payload: PropTypes.string.isRequired,
+    })
+  ),
+  nestedCommentsCount: PropTypes.number.isRequired,
   createdAt: PropTypes.string.isRequired,
 };
