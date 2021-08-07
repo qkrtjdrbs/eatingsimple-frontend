@@ -1,7 +1,6 @@
 import { useMutation } from "@apollo/client";
 import { faImages } from "@fortawesome/free-regular-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import gql from "graphql-tag";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import Loader from "react-loader-spinner";
@@ -19,6 +18,10 @@ import { PhotoContainer } from "../components/recipeWriteForm/PhotoContainer";
 import { Title } from "../components/recipeWriteForm/Title";
 import HomeLink from "../components/HomeLink";
 import { faFolderOpen, faFolderPlus } from "@fortawesome/free-solid-svg-icons";
+import {
+  DELETE_PHOTO_MUTATION,
+  EDIT_RECIPE_MUTATION,
+} from "../mutations/recipe/recipeMutations";
 
 const EditLayout = styled(AddLayout)``;
 const Delete = styled.div`
@@ -54,27 +57,6 @@ const NoPhotos = styled.div`
   align-items: center;
   justify-content: center;
   opacity: 2;
-`;
-const EDIT_RECIPE_MUTATION = gql`
-  mutation editRecipe(
-    $id: Int!
-    $title: String
-    $content: String
-    $files: [Upload]
-  ) {
-    editRecipe(id: $id, title: $title, content: $content, files: $files) {
-      ok
-      error
-    }
-  }
-`;
-const DELETE_PHOTO_MUTATION = gql`
-  mutation deletePhoto($file: String!) {
-    deletePhoto(file: $file) {
-      ok
-      error
-    }
-  }
 `;
 
 export default function EditRecipe() {

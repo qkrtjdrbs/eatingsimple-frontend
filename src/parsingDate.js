@@ -2,8 +2,7 @@ export default function parsingDate(date) {
   date = new Date(date);
   let today = new Date();
   let gap = today - date;
-  if (gap < 10000) return "방금 전";
-  if (gap < 1000 * 60) return "몇초 전";
+  if (gap < 1000 * 60) return "방금 전";
   const daySeconds = 24 * 60 * 60 * 1000;
   let minuteGap = Math.floor(
     (gap % (daySeconds / 24)) / (daySeconds / (60 * 24))

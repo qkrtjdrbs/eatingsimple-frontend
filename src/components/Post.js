@@ -17,6 +17,11 @@ import { isLoggedInVar } from "../apollo";
 import Comment, { DELETED_COMMENT } from "./Comment";
 import parsingDate from "../parsingDate";
 import { useForm } from "react-hook-form";
+import { WRITE_COMMENT_MUTATION } from "../mutations/comment/commentMutations";
+import {
+  DELETE_RECIPE_MUTATION,
+  TOGGLE_RECIPE_LIKE_MUTATION,
+} from "../mutations/recipe/recipeMutations";
 
 const PostBox = styled.div`
   border: 3px solid ${(props) => props.theme.lightGreen};
@@ -129,7 +134,7 @@ const Input = styled.input`
   height: auto;
   padding: 5px;
 `;
-const SubmitButton = styled.button`
+export const SubmitButton = styled.button`
   display: flex;
   justify-content: center;
   align-items: center;
@@ -178,38 +183,6 @@ const SEE_RECIPE_QUERY = gql`
         createdAt
       }
       commentsCount
-    }
-  }
-`;
-
-const TOGGLE_RECIPE_LIKE_MUTATION = gql`
-  mutation toggleRecipeLike($id: Int!) {
-    toggleRecipeLike(id: $id) {
-      ok
-    }
-  }
-`;
-const WRITE_COMMENT_MUTATION = gql`
-  mutation writeComment($recipeId: Int!, $payload: String!) {
-    writeComment(recipeId: $recipeId, payload: $payload) {
-      id
-      user {
-        username
-        avatar
-      }
-      payload
-      isMine
-      isLiked
-      likes
-      createdAt
-    }
-  }
-`;
-const DELETE_RECIPE_MUTATION = gql`
-  mutation deleteRecipe($id: Int!) {
-    deleteRecipe(id: $id) {
-      ok
-      error
     }
   }
 `;

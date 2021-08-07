@@ -11,6 +11,12 @@ import { faThumbsUp as ColoredThumbsUp } from "@fortawesome/free-solid-svg-icons
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import NestedComment from "./NestedComment";
+import { SubmitButton } from "./Post";
+import {
+  DELETE_COMMENT_MUTATION,
+  EDIT_COMMENT_MUTATION,
+  TOGGLE_COMMENT_LIKE,
+} from "../mutations/comment/commentMutations";
 
 export const DELETED_COMMENT = "[삭제된 댓글입니다]";
 
@@ -169,27 +175,6 @@ const SEE_RECIPE_QUERY = gql`
         createdAt
       }
       commentsCount
-    }
-  }
-`;
-const TOGGLE_COMMENT_LIKE = gql`
-  mutation toggleCommentLike($id: Int!) {
-    toggleCommentLike(id: $id) {
-      ok
-    }
-  }
-`;
-const DELETE_COMMENT_MUTATION = gql`
-  mutation deleteComment($id: Int!) {
-    deleteComment(id: $id) {
-      ok
-    }
-  }
-`;
-const EDIT_COMMENT_MUTATION = gql`
-  mutation editComment($id: Int!, $payload: String!) {
-    editComment(id: $id, payload: $payload) {
-      ok
     }
   }
 `;
@@ -373,12 +358,27 @@ export default function Comment({
           {payload === DELETED_COMMENT ? (
             <Payload style={{ opacity: "0.5" }}>{payload}</Payload>
           ) : (
-            <Payload>{payload}</Payload>
+            <>
+              <Payload>{payload}</Payload>
+              <Button onClick={() => onClickReply()}>💬</Button>
+            </>
           )}
-          <Button onClick={() => onClickReply()}>💬</Button>
         </PayloadBox>
       )}
-      {toggleReplyForm ? "답댓" : null}
+      {toggleReplyForm ? (
+        <div>
+          <EditForm>
+            <Input
+              type="text"
+              autoFocus
+              {...register("reply", { required: true })}
+            />
+            <SubmitButton type="submit" disabled={!formState.isValid}>
+              작성
+            </SubmitButton>
+          </EditForm>
+        </div>
+      ) : null}
       {nestedCommentsCount ? (
         <SeeReply onClick={() => onSeeReplies()}>
           {toggleSeeReplies

@@ -8,7 +8,6 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faImages } from "@fortawesome/free-solid-svg-icons";
 import Loader from "react-loader-spinner";
 import Slider from "react-slick";
-import gql from "graphql-tag";
 import { useMutation } from "@apollo/client";
 import FormError from "../components/auth/FormError";
 import Button from "../components/auth/Button";
@@ -17,16 +16,7 @@ import { Title } from "../components/recipeWriteForm/Title";
 import { Content, ContentBox } from "../components/recipeWriteForm/Content";
 import { Notice, Photo, Photos } from "../components/recipeWriteForm/Photo";
 import HomeLink from "../components/HomeLink";
-
-const CREATE_RECIPE_MUTATION = gql`
-  mutation createRecipe($title: String!, $content: String!, $files: [Upload]) {
-    createRecipe(title: $title, content: $content, files: $files) {
-      ok
-      error
-      id
-    }
-  }
-`;
+import { CREATE_RECIPE_MUTATION } from "../mutations/recipe/recipeMutations";
 
 export default function AddRecipe() {
   const settings = {
