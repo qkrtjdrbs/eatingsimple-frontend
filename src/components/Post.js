@@ -173,11 +173,16 @@ export const SEE_RECIPE_QUERY = gql`
         likes
         nestedComments {
           id
+          nestingId
           user {
             username
             avatar
           }
           payload
+          isMine
+          isLiked
+          likes
+          createdAt
         }
         nestedCommentsCount
         createdAt
@@ -366,7 +371,12 @@ export default function Post({
         <Comments>
           {data?.seeRecipe?.commentsCount !== 0 ? (
             data?.seeRecipe?.comments.map((comment) => (
-              <Comment key={comment.id} recipeId={recipeId} {...comment} />
+              <Comment
+                key={comment.id}
+                isNested={false}
+                recipeId={recipeId}
+                {...comment}
+              />
             ))
           ) : (
             <NoComments>아직 작성된 댓글이 없어요</NoComments>

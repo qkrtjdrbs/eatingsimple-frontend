@@ -9,7 +9,6 @@ import { faThumbsUp } from "@fortawesome/free-regular-svg-icons";
 import { faThumbsUp as ColoredThumbsUp } from "@fortawesome/free-solid-svg-icons";
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
-import NestedComment from "./NestedComment";
 import { SubmitButton, SEE_RECIPE_QUERY } from "./Post";
 import {
   DELETE_COMMENT_MUTATION,
@@ -156,11 +155,13 @@ const PayloadBox = styled.div`
 
 export default function Comment({
   id,
+  nestingId,
   user,
   payload,
   isMine,
   isLiked,
   likes,
+  isNested,
   recipeId,
   nestedComments,
   nestedCommentsCount,
@@ -308,7 +309,9 @@ export default function Comment({
   };
   const onReplySubmit = () => {
     const reply = getValues("reply");
-    writeNestedComment({ variables: { nestingId: id, payload: reply } });
+    if (!isNested)
+      writeNestedComment({ variables: { nestingId: id, payload: reply } });
+    else writeNestedComment({ variables: { nestingId, payload: reply } });
     setToggleReplyForm(!toggleReplyForm);
   };
   const [toggleEditForm, setToggleEditForm] = useState(false);
@@ -394,7 +397,12 @@ export default function Comment({
       ) : null}
       {toggleSeeReplies
         ? nestedComments?.map((comment) => (
-            <NestedComment key={comment.id} {...comment} />
+            <Comment
+              key={comment.id}
+              isNested={true}
+              recipeId={recipeId}
+              {...comment}
+            />
           ))
         : null}
     </CommentBox>
@@ -421,6 +429,7 @@ Comment.propTypes = {
       payload: PropTypes.string.isRequired,
     })
   ),
-  nestedCommentsCount: PropTypes.number.isRequired,
+  isNested: PropTypes.bool.isRequired,
+  nestedCommentsCount: PropTypes.number,
   createdAt: PropTypes.string.isRequired,
 };
