@@ -38,3 +38,20 @@ export const WRITE_COMMENT_MUTATION = gql`
     }
   }
 `;
+
+export const WRTIE_NESTED_COMMENT_MUTATION = gql`
+  mutation writeNestedComment($nestingId: Int!, $payload: String!) {
+    writeNestedComment(nestingId: $nestingId, payload: $payload) {
+      id
+      user {
+        username
+        avatar
+      }
+      payload
+      isMine
+      isLiked
+      likes
+      createdAt
+    }
+  }
+`;

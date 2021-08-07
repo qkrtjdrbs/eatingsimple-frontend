@@ -3,7 +3,6 @@ import styled from "styled-components";
 import parsingDate from "../parsingDate";
 import Avatar from "./auth/Avatar";
 import { Link } from "react-router-dom";
-import gql from "graphql-tag";
 import { useMutation } from "@apollo/client";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faThumbsUp } from "@fortawesome/free-regular-svg-icons";
@@ -11,11 +10,12 @@ import { faThumbsUp as ColoredThumbsUp } from "@fortawesome/free-solid-svg-icons
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import NestedComment from "./NestedComment";
-import { SubmitButton } from "./Post";
+import { SubmitButton, SEE_RECIPE_QUERY } from "./Post";
 import {
   DELETE_COMMENT_MUTATION,
   EDIT_COMMENT_MUTATION,
   TOGGLE_COMMENT_LIKE,
+  WRTIE_NESTED_COMMENT_MUTATION,
 } from "../mutations/comment/commentMutations";
 
 export const DELETED_COMMENT = "[삭제된 댓글입니다]";
@@ -72,7 +72,6 @@ const Button = styled.div`
     cursor: pointer;
   }
 `;
-
 const Like = styled.div`
   display: flex;
   justify-content: center;
@@ -153,30 +152,6 @@ const PayloadBox = styled.div`
   display: flex;
   align-items: center;
   justify-content: space-between;
-`;
-const SEE_RECIPE_QUERY = gql`
-  query seeRecipe($id: Int!) {
-    seeRecipe(id: $id) {
-      content
-      photos {
-        id
-        file
-      }
-      comments {
-        id
-        user {
-          username
-          avatar
-        }
-        payload
-        isMine
-        isLiked
-        likes
-        createdAt
-      }
-      commentsCount
-    }
-  }
 `;
 
 export default function Comment({
@@ -271,6 +246,28 @@ export default function Comment({
       setToggleEditForm(!toggleEditForm);
     }
   };
+  const updateNestedComment = (cache, result) => {
+    const {
+      data: { writeNestedComment },
+    } = result;
+    const existingComments = cache.readQuery({
+      query: SEE_RECIPE_QUERY,
+      variables: { id: recipeId },
+    });
+    cache.writeQuery({
+      query: SEE_RECIPE_QUERY,
+      variables: { id: recipeId },
+      data: {
+        seeRecipe: {
+          ...existingComments.seeRecipe,
+          comments: [
+            ...existingComments.seeRecipe.comments,
+            writeNestedComment,
+          ],
+        },
+      },
+    });
+  };
   const [toggleCommentLike] = useMutation(TOGGLE_COMMENT_LIKE, {
     variables: { id },
     update: updateCommentLike,
@@ -280,6 +277,9 @@ export default function Comment({
     update: updateCommentDelete,
   });
   const [editComment] = useMutation(EDIT_COMMENT_MUTATION);
+  const [writeNestedComment] = useMutation(WRTIE_NESTED_COMMENT_MUTATION, {
+    update: updateNestedComment,
+  });
   const onDeleteClick = () => {
     if (window.confirm("댓글을 삭제할까요?")) {
       deleteComment();
@@ -288,7 +288,7 @@ export default function Comment({
   const { register, handleSubmit, setValue, formState, getValues } = useForm({
     mode: "onChange",
   });
-  const onValid = () => {
+  const onEditSubmit = () => {
     const payload = getValues("edit");
     editComment({ variables: { id, payload }, update: updateCommentEdit });
   };
@@ -301,9 +301,15 @@ export default function Comment({
   };
   const onClickReply = () => {
     setToggleReplyForm(!toggleReplyForm);
+    setValue("reply", `@${user?.username} `);
   };
   const onSeeReplies = () => {
     setToggleSeeReplies(!toggleSeeReplies);
+  };
+  const onReplySubmit = () => {
+    const reply = getValues("reply");
+    writeNestedComment({ variables: { nestingId: id, payload: reply } });
+    setToggleReplyForm(!toggleReplyForm);
   };
   const [toggleEditForm, setToggleEditForm] = useState(false);
   const [toggleReplyForm, setToggleReplyForm] = useState(false);
@@ -341,7 +347,7 @@ export default function Comment({
       </Author>
       {toggleEditForm ? (
         <EditBox>
-          <EditForm onSubmit={handleSubmit(onValid)}>
+          <EditForm onSubmit={handleSubmit(onEditSubmit)}>
             <Input
               type="text"
               autoFocus
@@ -367,7 +373,7 @@ export default function Comment({
       )}
       {toggleReplyForm ? (
         <div>
-          <EditForm>
+          <EditForm onSubmit={handleSubmit(onReplySubmit)}>
             <Input
               type="text"
               autoFocus

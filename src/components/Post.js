@@ -153,7 +153,7 @@ export const SubmitButton = styled.button`
   }
 `;
 
-const SEE_RECIPE_QUERY = gql`
+export const SEE_RECIPE_QUERY = gql`
   query seeRecipe($id: Int!) {
     seeRecipe(id: $id) {
       content
