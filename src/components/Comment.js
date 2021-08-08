@@ -12,8 +12,11 @@ import { useForm } from "react-hook-form";
 import { SubmitButton, SEE_RECIPE_QUERY } from "./Post";
 import {
   DELETE_COMMENT_MUTATION,
+  DELETE_NESTED_COMMENT_MUTATION,
   EDIT_COMMENT_MUTATION,
+  EDIT_NESTED_COMMENT_MUTATION,
   TOGGLE_COMMENT_LIKE,
+  TOGGLE_NESTED_COMMENT_LIKE,
   WRTIE_NESTED_COMMENT_MUTATION,
 } from "../mutations/comment/commentMutations";
 
@@ -65,7 +68,7 @@ const Button = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
-  margin-left: 8px;
+  margin: 7px;
   font-size: 15px;
   &:hover {
     cursor: pointer;
@@ -76,7 +79,7 @@ const Like = styled.div`
   justify-content: center;
   align-items: center;
   width: auto;
-  padding: 5px 10px;
+  margin: 7px;
   font-size: 15px;
   cursor: pointer;
 `;
@@ -191,6 +194,30 @@ export default function Comment({
       });
     }
   };
+  const updateNestedCommentLike = (cache, result) => {
+    const {
+      data: {
+        toggleNestedCommentLike: { ok },
+      },
+    } = result;
+    if (ok) {
+      const commentId = `NestedComment:${id}`;
+      cache.modify({
+        id: commentId,
+        fields: {
+          isLiked(prev) {
+            return !prev;
+          },
+          likes(prev) {
+            if (isLiked) {
+              return prev - 1;
+            }
+            return prev + 1;
+          },
+        },
+      });
+    }
+  };
   const updateCommentDelete = (cache, result) => {
     const {
       data: {
@@ -222,10 +249,42 @@ export default function Comment({
         data: {
           seeRecipe: {
             ...existingComments.seeRecipe,
-            commentsCount: existingComments.seeRecipe.commentsCount - 1,
+            commentsCount: existingComments.seeRecipe.commentsCount
+              ? existingComments.seeRecipe.commentsCount - 1
+              : 0,
           },
         },
       });
+    }
+  };
+  const updateNestedCommentDelete = (cache, result) => {
+    const {
+      data: {
+        deleteNestedComment: { ok },
+      },
+    } = result;
+    if (ok) {
+      cache.evict({ id: `NestedComment:${id}` });
+      const commentId = `Comment:${nestingId}`;
+      let nestingDelFlag = 0;
+      cache.modify({
+        id: commentId,
+        fields: {
+          nestedCommentsCount(prev) {
+            if (prev - 1 === 0) nestingDelFlag += 1;
+            return prev - 1;
+          },
+          payload(prev) {
+            if (prev === DELETED_COMMENT) nestingDelFlag += 1;
+            return prev;
+          },
+        },
+      });
+      if (nestingDelFlag === 2)
+        deleteComment({
+          variables: { id: nestingId },
+          update: updateCommentDelete,
+        });
     }
   };
   const updateCommentEdit = (cache, result) => {
@@ -236,6 +295,25 @@ export default function Comment({
     } = result;
     if (ok) {
       const commentId = `Comment:${id}`;
+      cache.modify({
+        id: commentId,
+        fields: {
+          payload() {
+            return getValues("edit");
+          },
+        },
+      });
+      setToggleEditForm(!toggleEditForm);
+    }
+  };
+  const updateNestedCommentEdit = (cache, result) => {
+    const {
+      data: {
+        editNestedComment: { ok },
+      },
+    } = result;
+    if (ok) {
+      const commentId = `NestedComment:${id}`;
       cache.modify({
         id: commentId,
         fields: {
@@ -268,6 +346,7 @@ export default function Comment({
         },
       },
     });
+    setToggleReplyForm(!toggleReplyForm);
   };
   const [toggleCommentLike] = useMutation(TOGGLE_COMMENT_LIKE, {
     variables: { id },
@@ -281,9 +360,19 @@ export default function Comment({
   const [writeNestedComment] = useMutation(WRTIE_NESTED_COMMENT_MUTATION, {
     update: updateNestedComment,
   });
+  const [deleteNestedComment] = useMutation(DELETE_NESTED_COMMENT_MUTATION, {
+    variables: { id },
+    update: updateNestedCommentDelete,
+  });
+  const [editNestedComment] = useMutation(EDIT_NESTED_COMMENT_MUTATION);
+  const [toggleNestedCommentLike] = useMutation(TOGGLE_NESTED_COMMENT_LIKE, {
+    variables: { id },
+    update: updateNestedCommentLike,
+  });
   const onDeleteClick = () => {
     if (window.confirm("댓글을 삭제할까요?")) {
-      deleteComment();
+      if (isNested) deleteNestedComment();
+      else deleteComment();
     }
   };
   const { register, handleSubmit, setValue, formState, getValues } = useForm({
@@ -291,7 +380,12 @@ export default function Comment({
   });
   const onEditSubmit = () => {
     const payload = getValues("edit");
-    editComment({ variables: { id, payload }, update: updateCommentEdit });
+    if (isNested)
+      editNestedComment({
+        variables: { id, payload },
+        update: updateNestedCommentEdit,
+      });
+    else editComment({ variables: { id, payload }, update: updateCommentEdit });
   };
   const onEditClick = () => {
     setToggleEditForm(!toggleEditForm);
@@ -312,7 +406,6 @@ export default function Comment({
     if (!isNested)
       writeNestedComment({ variables: { nestingId: id, payload: reply } });
     else writeNestedComment({ variables: { nestingId, payload: reply } });
-    setToggleReplyForm(!toggleReplyForm);
   };
   const [toggleEditForm, setToggleEditForm] = useState(false);
   const [toggleReplyForm, setToggleReplyForm] = useState(false);
@@ -331,7 +424,9 @@ export default function Comment({
         {toggleEditForm ? null : (
           <ButtonContainer>
             <Created>{parsingDate(createdAt)}</Created>
-            <Like onClick={toggleCommentLike}>
+            <Like
+              onClick={isNested ? toggleNestedCommentLike : toggleCommentLike}
+            >
               <Likes>{likes}</Likes>
               {isLiked ? (
                 <FontAwesomeIcon icon={ColoredThumbsUp} color={"tomato"} />

@@ -369,7 +369,7 @@ export default function Post({
           </Icon>
         </Icons>
         <Comments>
-          {data?.seeRecipe?.commentsCount !== 0 ? (
+          {data?.seeRecipe?.comments?.length !== 0 ? (
             data?.seeRecipe?.comments.map((comment) => (
               <Comment
                 key={comment.id}

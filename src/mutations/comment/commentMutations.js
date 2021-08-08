@@ -55,3 +55,28 @@ export const WRTIE_NESTED_COMMENT_MUTATION = gql`
     }
   }
 `;
+
+export const DELETE_NESTED_COMMENT_MUTATION = gql`
+  mutation deleteNestedComment($id: Int!) {
+    deleteNestedComment(id: $id) {
+      ok
+      error
+    }
+  }
+`;
+
+export const EDIT_NESTED_COMMENT_MUTATION = gql`
+  mutation editNestedComment($id: Int!, $payload: String!) {
+    editNestedComment(id: $id, payload: $payload) {
+      ok
+    }
+  }
+`;
+
+export const TOGGLE_NESTED_COMMENT_LIKE = gql`
+  mutation toggleNestedCommentLike($id: Int!) {
+    toggleNestedCommentLike(id: $id) {
+      ok
+    }
+  }
+`;
