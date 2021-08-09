@@ -7,12 +7,24 @@ import ProfileAvatar from "../components/ProfileAvatar";
 import Button from "../components/auth/Button";
 import PageTitle from "../components/PageTitle";
 import parsingDate from "../parsingDate";
-import Post from "../components/Post";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import FormError from "../components/auth/FormError";
+import UserRecipes from "../components/UserRecipes";
 
 const Layout = styled(AddLayout)``;
+const AvatarContainer = styled.div`
+  position: relative;
+`;
+const RecieveHearts = styled.div`
+  position: absolute;
+  top: 5px;
+  background-color: #383838;
+  color: white;
+  height: 22px;
+  padding: 5px 10px;
+  border-radius: 20px;
+`;
 const ProfileBox = styled.div`
   display: flex;
   justify-content: center;
@@ -79,6 +91,9 @@ const RecipeAndComment = styled.div`
   font-weight: 500;
   margin-bottom: 10px;
 `;
+const TabButton = styled.span`
+  cursor: pointer;
+`;
 const EditButton = styled(Button)`
   width: 100%;
   margin: auto;
@@ -102,26 +117,6 @@ const CreateDate = styled.div`
   font-size: 15px;
   opacity: 0.5;
   width: 80%;
-`;
-const UserRecipes = styled.div``;
-const NoticeBox = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-bottom: 30px;
-`;
-const NoticeLine = styled.div`
-  height: 2px;
-  background-color: ${(props) => props.theme.lightGreen};
-  width: 100%;
-`;
-const Notice = styled.div`
-  font-size: 40px;
-  height: 40px;
-  white-space: nowrap;
-  text-align: center;
-  word-break: keep-all;
-  padding: 0 10px;
 `;
 const EmptyRecipe = styled.div`
   display: flex;
@@ -156,6 +151,23 @@ const SEE_PROFILE_QUERY = gql`
       recipesCount
       commentsCount
       isMe
+      createdAt
+    }
+  }
+`;
+const SEE_USER_LIKE_RECIPES = gql`
+  query userLikeRecipes($id: Int!) {
+    userLikeRecipes(id: $id) {
+      id
+      title
+      user {
+        username
+        avatar
+      }
+      commentsCount
+      likes
+      isMine
+      isLiked
       createdAt
     }
   }
@@ -198,10 +210,30 @@ export default function Profile() {
   } = useForm({ mode: "onChange" });
   const [toggleEditForm, setToggleEditForm] = useState(false);
   const { data } = useQuery(SEE_PROFILE_QUERY, { variables: { username } });
+  const { data: likeData } = useQuery(SEE_USER_LIKE_RECIPES, {
+    variables: { id: data?.seeProfile?.id },
+  });
+  const tabs = {
+    0: (
+      <UserRecipes
+        username={data?.seeProfile?.username}
+        title={"의 레시피"}
+        recipes={data?.seeProfile?.recipes}
+      />
+    ),
+    1: (
+      <UserRecipes
+        username={data?.seeProfile?.username}
+        title={"이 좋아한 레시피"}
+        recipes={likeData?.userLikeRecipes}
+      />
+    ),
+  };
   let hearts = 0;
   data?.seeProfile?.recipes?.forEach((recipe) => (hearts += recipe.likes));
   const [avatar, setavatar] = useState(null);
   const [newAvatar, setNewAvatar] = useState(null);
+  const [tab, setTab] = useState(0);
   useEffect(() => {
     setavatar(data?.seeProfile?.avatar);
   }, [data]);
@@ -327,15 +359,22 @@ export default function Profile() {
             </>
           ) : (
             <>
-              <ProfileAvatar url={data?.seeProfile?.avatar} />
+              <AvatarContainer>
+                <RecieveHearts>{hearts}💕</RecieveHearts>
+                <ProfileAvatar url={data?.seeProfile?.avatar} />
+              </AvatarContainer>
               <UserInfo>
                 <Username>{data?.seeProfile?.username}</Username>
                 <Email>{data?.seeProfile?.email}</Email>
                 <Bio>{data?.seeProfile?.bio}</Bio>
                 <RecipeAndComment>
-                  {hearts}💖 • {data?.seeProfile?.recipesCount}🍴 •{" "}
-                  {data?.seeProfile?.commentsCount}
-                  💬
+                  <TabButton onClick={() => setTab(0)}>
+                    {data?.seeProfile?.recipesCount}🍴
+                  </TabButton>{" "}
+                  • {data?.seeProfile?.commentsCount}💬 •{" "}
+                  <TabButton onClick={() => setTab(1)}>
+                    {likeData?.userLikeRecipes.length}💖
+                  </TabButton>
                 </RecipeAndComment>
                 <CreateDate>{createdDate} 생성</CreateDate>
               </UserInfo>
@@ -345,22 +384,7 @@ export default function Profile() {
         {data?.seeProfile?.isMe && !toggleEditForm ? (
           <EditButton onClick={() => onEditClick()}>프로필 수정</EditButton>
         ) : null}
-        {toggleEditForm ? null : (
-          <UserRecipes>
-            <NoticeBox>
-              <NoticeLine></NoticeLine>
-              <Notice>{data?.seeProfile?.username}님의 레시피</Notice>
-              <NoticeLine></NoticeLine>
-            </NoticeBox>
-            {data?.seeProfile?.recipes?.length > 0 ? (
-              data.seeProfile.recipes.map((recipe) => (
-                <Post key={recipe.id} sorting="recent" {...recipe} />
-              ))
-            ) : (
-              <EmptyRecipe>작성한 레시피가 없어요 😢</EmptyRecipe>
-            )}
-          </UserRecipes>
-        )}
+        {toggleEditForm ? null : tabs[tab]}
       </Layout>
     );
 }

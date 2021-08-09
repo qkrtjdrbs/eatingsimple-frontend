@@ -35,7 +35,7 @@ export function MainRouter() {
         <Route path={`/recipe/:id`} exact>
           <EditRecipe />
         </Route>
-        <Route path={`/user/:username`} exact>
+        <Route path={`/user/:username`}>
           <Header />
           <Profile />
         </Route>
