@@ -23,11 +23,11 @@
 ## Edit Recipe
 ![editRecipe](https://user-images.githubusercontent.com/68425462/129190048-76b9d7fd-02c4-4780-bf54-41daad90075c.gif)
 
-## Search
-![Search](https://user-images.githubusercontent.com/68425462/129190080-6289faef-4ddd-4fdf-904b-629a6aa5b5ae.gif)
-
 ## Edit Profile
 ![editProfile](https://user-images.githubusercontent.com/68425462/129190118-b4ac0cc1-edf2-461c-8646-d6eb6d8f71f9.gif)
+
+## Search
+![Search](https://user-images.githubusercontent.com/68425462/129190080-6289faef-4ddd-4fdf-904b-629a6aa5b5ae.gif)
 
 
 ## Install
