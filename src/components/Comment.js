@@ -257,6 +257,17 @@ export default function Comment({
       });
     }
   };
+  const updateEmptyCommentDelete = (cache, result) => {
+    const {
+      data: {
+        deleteComment: { ok },
+      },
+    } = result;
+    if (ok) {
+      //delete comment from cache.
+      cache.evict({ id: `Comment:${nestingId}` });
+    }
+  };
   const updateNestedCommentDelete = (cache, result) => {
     const {
       data: {
@@ -283,7 +294,7 @@ export default function Comment({
       if (nestingDelFlag === 2)
         deleteComment({
           variables: { id: nestingId },
-          update: updateCommentDelete,
+          update: updateEmptyCommentDelete,
         });
     }
   };
