@@ -5,8 +5,6 @@
 
 > 자신만의 간단한 레시피를 공유할 수 있는 사이트입니다.
 
-### 🏠 [Homepage](www.notyet.com)
-
 ## Install
 
 ```sh
