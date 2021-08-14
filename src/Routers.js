@@ -10,6 +10,7 @@ import Recipes from "./components/Recipes";
 import AddRecipe from "./screens/AddRecipe";
 import Profile from "./screens/Profile";
 import EditRecipe from "./screens/EditRecipe";
+import TagRecipes from "./screens/TagRecipes";
 
 export function MainRouter() {
   return (
@@ -42,6 +43,14 @@ export function MainRouter() {
         <Route path={`/search/:keyword`}>
           <Header />
           <SearchResult />
+        </Route>
+        <Route path={`/search/:keyword`}>
+          <Header />
+          <SearchResult />
+        </Route>
+        <Route path={`${routes.tagResult}/:tag`}>
+          <Header />
+          <TagRecipes />
         </Route>
         <Route>
           <NotFound />

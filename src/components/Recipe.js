@@ -1,6 +1,10 @@
 import styled from "styled-components";
 import Slider from "react-slick";
 import { PropTypes, shape } from "prop-types";
+import { Link } from "react-router-dom";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faTags } from "@fortawesome/free-solid-svg-icons";
+import { routes } from "../routes";
 
 const ContentBox = styled.div`
   margin: 15px 0px;
@@ -27,8 +31,23 @@ const Description = styled.div`
 const Image = styled.img`
   height: 500px;
 `;
-
-export default function Recipe({ content, photos }) {
+const TagBox = styled.div`
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  margin-top: 20px;
+`;
+export const Tag = styled.div`
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  background-color: ${(props) => props.theme.lightGreen};
+  padding: 5px 10px;
+  color: white;
+  margin: 0px 10px;
+  border-radius: 15px;
+`;
+export default function Recipe({ content, photos, tags }) {
   const settings = {
     dots: true,
     infinite: true,
@@ -44,6 +63,19 @@ export default function Recipe({ content, photos }) {
           <Image key={photo.id} src={photo.file} />
         ))}
       </Slider>
+      {tags?.length > 0 ? (
+        <TagBox>
+          <FontAwesomeIcon icon={faTags} />
+          {tags?.map((tag) => {
+            let removeSharp = tag.tag.substr(1);
+            return (
+              <Link key={tag.id} to={`${routes.tagResult}/${removeSharp}`}>
+                <Tag>{tag.tag}</Tag>
+              </Link>
+            );
+          })}
+        </TagBox>
+      ) : null}
     </ContentBox>
   );
 }

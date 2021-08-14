@@ -187,6 +187,10 @@ export const SEE_RECIPE_QUERY = gql`
         nestedCommentsCount
         createdAt
       }
+      tags {
+        id
+        tag
+      }
       commentsCount
     }
   }

@@ -6,4 +6,5 @@ export const routes = {
   addRecipe: "/add-recipe",
   recentRecipes: "/recipes/recent",
   recommandedRecipes: "/recipes/recommand",
+  tagResult: "/tag",
 };

@@ -18,8 +18,13 @@ export const DELETE_RECIPE_MUTATION = gql`
 `;
 
 export const CREATE_RECIPE_MUTATION = gql`
-  mutation createRecipe($title: String!, $content: String!, $files: [Upload]) {
-    createRecipe(title: $title, content: $content, files: $files) {
+  mutation createRecipe(
+    $title: String!
+    $content: String!
+    $files: [Upload]
+    $tags: [String]
+  ) {
+    createRecipe(title: $title, content: $content, files: $files, tags: $tags) {
       ok
       error
       id

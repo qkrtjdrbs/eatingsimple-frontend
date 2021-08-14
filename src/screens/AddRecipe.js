@@ -15,6 +15,7 @@ import { useHistory } from "react-router-dom";
 import { Title } from "../components/recipeWriteForm/Title";
 import { Content, ContentBox } from "../components/recipeWriteForm/Content";
 import { Notice, Photo, Photos } from "../components/recipeWriteForm/Photo";
+import { Tags } from "../components/recipeWriteForm/Tags";
 import HomeLink from "../components/HomeLink";
 import { CREATE_RECIPE_MUTATION } from "../mutations/recipe/recipeMutations";
 
@@ -69,8 +70,8 @@ export default function AddRecipe() {
     if (loading) {
       return;
     }
-    createRecipe({ variables: { ...data } });
-    return null;
+    let tags = data.tags?.match(/#[a-zA-Z0-9ㄱ-ㅎ가-힣]+/g);
+    createRecipe({ variables: { ...data, tags } });
   };
   const [createRecipe, { loading }] = useMutation(CREATE_RECIPE_MUTATION, {
     onCompleted,
@@ -92,6 +93,12 @@ export default function AddRecipe() {
             {...register("content", { required: true })}
             type="text"
             placeholder="레시피에 대한 간단한 설명을 써주세요"
+            onFocus={() => clearErrors("result")}
+          />
+          <Tags
+            {...register("tags")}
+            type="text"
+            placeholder="해시태그를 등록해주세요"
             onFocus={() => clearErrors("result")}
           />
           {photoURLs ? (
