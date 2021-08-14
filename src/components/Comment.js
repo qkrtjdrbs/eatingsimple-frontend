@@ -155,6 +155,10 @@ const PayloadBox = styled.div`
   align-items: center;
   justify-content: space-between;
 `;
+const BlueText = styled.p`
+  color: ${(props) => props.theme.blue};
+  margin-right: 5px;
+`;
 
 export default function Comment({
   id,
@@ -474,7 +478,19 @@ export default function Comment({
             <Payload style={{ opacity: "0.5" }}>{payload}</Payload>
           ) : (
             <>
-              <Payload>{payload}</Payload>
+              <Payload>
+                {payload?.split(" ").map((word, index) =>
+                  /#[a-zA-Z0-9ㄱ-ㅎ가-힣]+/.test(`${word}`) ? (
+                    <BlueText key={index}>
+                      <Link to={`/tag/${word.substr(1)}`}>{word}</Link>{" "}
+                    </BlueText>
+                  ) : /@[a-zA-Z0-9ㄱ-ㅎ가-힣]+/.test(`${word}`) ? (
+                    <BlueText key={index}>{word}</BlueText>
+                  ) : (
+                    <React.Fragment key={index}>{word}</React.Fragment>
+                  )
+                )}
+              </Payload>
               <Button onClick={() => onClickReply()}>💬</Button>
             </>
           )}
