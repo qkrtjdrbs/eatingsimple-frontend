@@ -19,6 +19,7 @@ import {
   TOGGLE_NESTED_COMMENT_LIKE,
   WRTIE_NESTED_COMMENT_MUTATION,
 } from "../mutations/comment/commentMutations";
+import parsingTagAndMention from "../parsingTagAndMention";
 
 export const DELETED_COMMENT = "[삭제된 댓글입니다]";
 
@@ -480,14 +481,28 @@ export default function Comment({
             <>
               <Payload>
                 {payload?.split(" ").map((word, index) =>
-                  /#[a-zA-Z0-9ㄱ-ㅎ가-힣]+/.test(`${word}`) ? (
-                    <BlueText key={index}>
-                      <Link to={`/tag/${word.substr(1)}`}>{word}</Link>{" "}
-                    </BlueText>
-                  ) : /@[a-zA-Z0-9ㄱ-ㅎ가-힣]+/.test(`${word}`) ? (
-                    <BlueText key={index}>{word}</BlueText>
+                  /#[a-zA-Z0-9ㄱ-ㅎ가-힣]+/g.test(`${word}`) ? (
+                    parsingTagAndMention("tag", word).map(
+                      (parsedWord, index) => (
+                        <BlueText key={index}>
+                          <Link to={`/tag/${parsedWord.substr(1)}`}>
+                            {parsedWord}
+                          </Link>{" "}
+                        </BlueText>
+                      )
+                    )
+                  ) : /@[a-zA-Z0-9ㄱ-ㅎ가-힣]+/g.test(`${word}`) ? (
+                    parsingTagAndMention("mention", word).map(
+                      (parsedWord, index) => (
+                        <BlueText key={index}>
+                          <Link to={`/user/${parsedWord.substr(1)}`}>
+                            {parsedWord}
+                          </Link>{" "}
+                        </BlueText>
+                      )
+                    )
                   ) : (
-                    <React.Fragment key={index}>{word}</React.Fragment>
+                    <React.Fragment key={index}>{word} </React.Fragment>
                   )
                 )}
               </Payload>

@@ -18,6 +18,7 @@ import { Notice, Photo, Photos } from "../components/recipeWriteForm/Photo";
 import { Tags } from "../components/recipeWriteForm/Tags";
 import HomeLink from "../components/HomeLink";
 import { CREATE_RECIPE_MUTATION } from "../mutations/recipe/recipeMutations";
+import parsingTagAndMention from "../parsingTagAndMention";
 
 export default function AddRecipe() {
   const settings = {
@@ -70,7 +71,7 @@ export default function AddRecipe() {
     if (loading) {
       return;
     }
-    let tags = data.tags?.match(/#[a-zA-Z0-9ㄱ-ㅎ가-힣]+/g);
+    let tags = parsingTagAndMention("tag", data.tags);
     createRecipe({ variables: { ...data, tags } });
   };
   const [createRecipe, { loading }] = useMutation(CREATE_RECIPE_MUTATION, {
