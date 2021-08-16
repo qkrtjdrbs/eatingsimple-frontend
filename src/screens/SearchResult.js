@@ -53,7 +53,7 @@ const Users = styled.div`
   margin-bottom: 10px;
 `;
 const AvatarBox = styled.div``;
-const NoResult = styled.div`
+export const NoResult = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;

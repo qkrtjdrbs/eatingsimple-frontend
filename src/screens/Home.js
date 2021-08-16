@@ -32,8 +32,15 @@ const SearchBoard = styled.div`
   border-radius: 25px;
   background-color: white;
 `;
+const Form = styled.form`
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  width: 100%;
+`;
 const Search = styled.input`
   padding: 5px 15px;
+  width: 100%;
   &:focus::placeholder {
     color: transparent;
   }
@@ -112,7 +119,9 @@ export default function Home() {
     mode: "onChange",
   });
   const onSubmit = ({ search }) => {
-    history.push(`search/${search}`);
+    if (search[0] === "#")
+      history.push(`${routes.tagResult}/${search.substr(1)}`);
+    else history.push(`search/${search}`);
   };
   const clearSearchError = () => {
     clearErrors("search");
@@ -127,7 +136,7 @@ export default function Home() {
           ))}
         </Slider>
         <SearchBoard>
-          <form onSubmit={handleSubmit(onSubmit)}>
+          <Form onSubmit={handleSubmit(onSubmit)}>
             <Button type="submit" disabled={!formState.isValid}>
               <FontAwesomeIcon icon={faSearch} size="2x" />
             </Button>
@@ -137,9 +146,9 @@ export default function Home() {
               })}
               type="text"
               onFocus={clearSearchError}
-              placeholder="오늘 뭐 먹지?"
+              placeholder="오늘 뭐 먹지? #자취 #라면"
             />
-          </form>
+          </Form>
         </SearchBoard>
       </Billboard>
       <BelowBox>

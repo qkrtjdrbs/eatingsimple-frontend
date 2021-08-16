@@ -66,14 +66,11 @@ export default function Recipe({ content, photos, tags }) {
       {tags?.length > 0 ? (
         <TagBox>
           <FontAwesomeIcon icon={faTags} />
-          {tags?.map((tag) => {
-            let removeSharp = tag.tag.substr(1);
-            return (
-              <Link key={tag.id} to={`${routes.tagResult}/${removeSharp}`}>
-                <Tag>{tag.tag}</Tag>
-              </Link>
-            );
-          })}
+          {tags?.map((tag) => (
+            <Link key={tag.id} to={`${routes.tagResult}/${tag.tag.substr(1)}`}>
+              <Tag>{tag.tag}</Tag>
+            </Link>
+          ))}
         </TagBox>
       ) : null}
     </ContentBox>
@@ -86,6 +83,12 @@ Recipe.propTypes = {
     shape({
       id: PropTypes.number.isRequired,
       file: PropTypes.string.isRequired,
+    })
+  ),
+  tags: PropTypes.arrayOf(
+    shape({
+      id: PropTypes.number.isRequired,
+      tag: PropTypes.string.isRequired,
     })
   ),
 };
