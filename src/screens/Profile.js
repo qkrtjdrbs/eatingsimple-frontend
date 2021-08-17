@@ -196,6 +196,23 @@ const EDIT_PROFILE_MUTATION = gql`
     }
   }
 `;
+const USER_COMMENTIG_RECIPES = gql`
+  query userCommentingRecipes($username: String!) {
+    userCommentingRecipes(username: $username) {
+      id
+      title
+      user {
+        username
+        avatar
+      }
+      commentsCount
+      likes
+      isMine
+      isLiked
+      createdAt
+    }
+  }
+`;
 
 export default function Profile() {
   const { username } = useParams();
@@ -213,19 +230,29 @@ export default function Profile() {
   const { data: likeData } = useQuery(SEE_USER_LIKE_RECIPES, {
     variables: { id: data?.seeProfile?.id },
   });
+  let { data: commentingData } = useQuery(USER_COMMENTIG_RECIPES, {
+    variables: { username },
+  });
   const tabs = {
     0: (
       <UserRecipes
-        username={data?.seeProfile?.username}
+        username={username}
         title={"의 레시피"}
         recipes={data?.seeProfile?.recipes}
       />
     ),
     1: (
       <UserRecipes
-        username={data?.seeProfile?.username}
+        username={username}
         title={"이 좋아한 레시피"}
         recipes={likeData?.userLikeRecipes}
+      />
+    ),
+    2: (
+      <UserRecipes
+        username={username}
+        title={"이 댓글을 남긴 레시피"}
+        recipes={commentingData?.userCommentingRecipes}
       />
     ),
   };
@@ -371,7 +398,11 @@ export default function Profile() {
                   <TabButton onClick={() => setTab(0)}>
                     {data?.seeProfile?.recipesCount}🍴
                   </TabButton>{" "}
-                  • {data?.seeProfile?.commentsCount}💬 •{" "}
+                  •{" "}
+                  <TabButton onClick={() => setTab(2)}>
+                    {data?.seeProfile?.commentsCount}💬
+                  </TabButton>{" "}
+                  •{" "}
                   <TabButton onClick={() => setTab(1)}>
                     {likeData?.userLikeRecipes.length}💖
                   </TabButton>

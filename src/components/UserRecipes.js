@@ -1,4 +1,5 @@
 import styled from "styled-components";
+import { PropTypes, shape } from "prop-types";
 import Post from "./Post";
 
 const NoticeBox = styled.div`
@@ -43,8 +44,27 @@ export default function UserRecipes({ username, title, recipes }) {
           <Post key={recipe.id} sorting="recent" {...recipe} />
         ))
       ) : (
-        <EmptyRecipe>작성한 레시피가 없어요 😢</EmptyRecipe>
+        <EmptyRecipe>레시피가 없어요 😢</EmptyRecipe>
       )}
     </div>
   );
 }
+
+UserRecipes.propTypes = {
+  username: PropTypes.string.isRequired,
+  title: PropTypes.string.isRequired,
+  recipes: PropTypes.arrayOf(
+    shape({
+      id: PropTypes.number.isRequired,
+      title: PropTypes.string.isRequired,
+      user: PropTypes.shape({
+        username: PropTypes.string.isRequired,
+        avatar: PropTypes.string,
+      }),
+      likes: PropTypes.number.isRequired,
+      isMine: PropTypes.bool.isRequired,
+      isLiked: PropTypes.bool.isRequired,
+      createdAt: PropTypes.string.isRequired,
+    })
+  ),
+};
