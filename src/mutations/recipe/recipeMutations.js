@@ -38,8 +38,15 @@ export const EDIT_RECIPE_MUTATION = gql`
     $title: String
     $content: String
     $files: [Upload]
+    $tags: [String]
   ) {
-    editRecipe(id: $id, title: $title, content: $content, files: $files) {
+    editRecipe(
+      id: $id
+      title: $title
+      content: $content
+      files: $files
+      tags: $tags
+    ) {
       ok
       error
     }

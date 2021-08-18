@@ -28,10 +28,11 @@ import {
 } from "../mutations/recipe/recipeMutations";
 import { Tag, TagBox } from "../components/Recipe";
 import { Tags } from "../components/recipeWriteForm/Tags";
+import parsingTagAndMention from "../parsingTagAndMention";
 
-const DELETE_TAG_MUTATION = gql`
-  mutation deleteTag($tag: String!) {
-    deleteTag(tag: $tag) {
+const DISCONNET_TAG_MUTATION = gql`
+  mutation disconnectTag($id: Int!, $tag: String!) {
+    disconnectTag(id: $id, tag: $tag) {
       ok
       error
     }
@@ -116,9 +117,9 @@ export default function EditRecipe() {
       setError("result", error);
     }
   };
-  const onTagDeleted = (data) => {
+  const onTagDisconnected = (data) => {
     const {
-      deleteTag: { ok, error },
+      disconnectTag: { ok, error },
     } = data;
     if (!ok) {
       setError("result", error);
@@ -128,8 +129,8 @@ export default function EditRecipe() {
     onCompleted,
   });
   const [deletePhoto] = useMutation(DELETE_PHOTO_MUTATION);
-  const [deleteTag] = useMutation(DELETE_TAG_MUTATION, {
-    onCompleted: onTagDeleted,
+  const [disconnectTag] = useMutation(DISCONNET_TAG_MUTATION, {
+    onCompleted: onTagDisconnected,
   });
   useEffect(() => {
     setValue("title", title);
@@ -137,7 +138,8 @@ export default function EditRecipe() {
   }, [title, content, setValue]);
   const onValid = (data) => {
     id = parseInt(id);
-    editRecipe({ variables: { id, ...data } });
+    let tags = parsingTagAndMention("tag", data.tags);
+    editRecipe({ variables: { id, ...data, tags } });
   };
   const onPhotoClick = async (e) => {
     const {
@@ -175,7 +177,8 @@ export default function EditRecipe() {
       const {
         target: { innerText: tag },
       } = e;
-      deleteTag({ variables: { tag } });
+      id = parseInt(id);
+      disconnectTag({ variables: { id, tag } });
       setExTags(exTags.filter((exTag) => exTag.tag !== tag));
     }
   };
@@ -204,7 +207,7 @@ export default function EditRecipe() {
             placeholder="해시태그를 추가 해주세요"
             onFocus={() => clearErrors("result")}
           />
-          {exTags ? (
+          {exTags?.length ? (
             <TagBox>
               <FontAwesomeIcon icon={faTags} />
               {exTags?.map((tag) => (
@@ -218,7 +221,7 @@ export default function EditRecipe() {
           <OldAndNew>
             <FontAwesomeIcon icon={faFolderOpen} /> 기존 사진들
           </OldAndNew>
-          {exPhotos ? (
+          {exPhotos?.length ? (
             <ExPhotoBox>
               <Slider {...settings}>
                 {exPhotos.map((photo, index) => (
