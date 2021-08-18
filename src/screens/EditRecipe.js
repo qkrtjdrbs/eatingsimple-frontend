@@ -1,4 +1,4 @@
-import { useMutation } from "@apollo/client";
+import { gql, useMutation } from "@apollo/client";
 import { faImages } from "@fortawesome/free-regular-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useEffect, useState } from "react";
@@ -17,11 +17,26 @@ import { Notice, Photo, Photos } from "../components/recipeWriteForm/Photo";
 import { PhotoContainer } from "../components/recipeWriteForm/PhotoContainer";
 import { Title } from "../components/recipeWriteForm/Title";
 import HomeLink from "../components/HomeLink";
-import { faFolderOpen, faFolderPlus } from "@fortawesome/free-solid-svg-icons";
+import {
+  faFolderOpen,
+  faFolderPlus,
+  faTags,
+} from "@fortawesome/free-solid-svg-icons";
 import {
   DELETE_PHOTO_MUTATION,
   EDIT_RECIPE_MUTATION,
 } from "../mutations/recipe/recipeMutations";
+import { Tag, TagBox } from "../components/Recipe";
+import { Tags } from "../components/recipeWriteForm/Tags";
+
+const DELETE_TAG_MUTATION = gql`
+  mutation deleteTag($tag: String!) {
+    deleteTag(tag: $tag) {
+      ok
+      error
+    }
+  }
+`;
 
 const EditLayout = styled(AddLayout)``;
 const Delete = styled.div`
@@ -58,6 +73,12 @@ const NoPhotos = styled.div`
   justify-content: center;
   opacity: 2;
 `;
+const DelTag = styled(Tag)`
+  cursor: pointer;
+  &:hover {
+    background-color: ${(props) => props.theme.red};
+  }
+`;
 
 export default function EditRecipe() {
   const settings = {
@@ -71,10 +92,11 @@ export default function EditRecipe() {
   const location = useLocation();
   let { id } = useParams();
   const {
-    state: { title, content, photos },
+    state: { title, content, photos, tags },
   } = location;
   const [exPhotos, setExPhotos] = useState(photos);
   const [newPhotos, setNewPhotos] = useState(null);
+  const [exTags, setExTags] = useState(tags);
   const {
     register,
     handleSubmit,
@@ -94,10 +116,21 @@ export default function EditRecipe() {
       setError("result", error);
     }
   };
+  const onTagDeleted = (data) => {
+    const {
+      deleteTag: { ok, error },
+    } = data;
+    if (!ok) {
+      setError("result", error);
+    }
+  };
   const [editRecipe, { loading }] = useMutation(EDIT_RECIPE_MUTATION, {
     onCompleted,
   });
   const [deletePhoto] = useMutation(DELETE_PHOTO_MUTATION);
+  const [deleteTag] = useMutation(DELETE_TAG_MUTATION, {
+    onCompleted: onTagDeleted,
+  });
   useEffect(() => {
     setValue("title", title);
     setValue("content", content);
@@ -137,6 +170,15 @@ export default function EditRecipe() {
       reader.readAsDataURL(f);
     }
   };
+  const onTagClick = (e) => {
+    if (window.confirm("이 태그를 삭제할까요?")) {
+      const {
+        target: { innerText: tag },
+      } = e;
+      deleteTag({ variables: { tag } });
+      setExTags(exTags.filter((exTag) => exTag.tag !== tag));
+    }
+  };
   return (
     <EditLayout>
       <PageTitle title="수정" />
@@ -156,6 +198,23 @@ export default function EditRecipe() {
             placeholder="레시피에 대한 간단한 설명을 써주세요"
             onFocus={() => clearErrors("result")}
           />
+          <Tags
+            {...register("tags")}
+            type="text"
+            placeholder="해시태그를 추가 해주세요"
+            onFocus={() => clearErrors("result")}
+          />
+          {exTags ? (
+            <TagBox>
+              <FontAwesomeIcon icon={faTags} />
+              {exTags?.map((tag) => (
+                <DelTag key={tag.id} onClick={(e) => onTagClick(e)}>
+                  {tag.tag}
+                </DelTag>
+              ))}
+            </TagBox>
+          ) : null}
+
           <OldAndNew>
             <FontAwesomeIcon icon={faFolderOpen} /> 기존 사진들
           </OldAndNew>

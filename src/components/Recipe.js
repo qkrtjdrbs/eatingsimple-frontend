@@ -31,7 +31,7 @@ const Description = styled.div`
 const Image = styled.img`
   height: 500px;
 `;
-const TagBox = styled.div`
+export const TagBox = styled.div`
   display: flex;
   justify-content: flex-start;
   align-items: center;
