@@ -18,7 +18,7 @@
 ![comment](https://user-images.githubusercontent.com/68425462/130067906-d7417d47-7179-461a-97c8-ecc0a34b8d22.gif)
 
 ## Create Recipe
-![CreateRecipe](https://user-images.githubusercontent.com/68425462/129190016-6643c93f-38a3-4f86-96aa-c6203d362c8a.gif)
+![createRecipe (1)](https://user-images.githubusercontent.com/68425462/130068779-54f9ee8e-9d60-496f-9e1e-314acb7f30cb.gif)
 
 ## Edit Recipe
 ![editRecipe (1)](https://user-images.githubusercontent.com/68425462/130068007-0b60223e-44dc-4f86-81a9-5e8a94410858.gif)
