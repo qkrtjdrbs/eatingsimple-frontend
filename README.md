@@ -12,16 +12,16 @@
 ![SignUp](https://user-images.githubusercontent.com/68425462/129189894-ded48583-a6a2-423e-addb-13bf24fe519a.gif)
 
 ## Post
-![Recipe (1)](https://user-images.githubusercontent.com/68425462/129189942-7b711fe7-7508-4653-8ecd-d1684e03481d.gif)
+![Post](https://user-images.githubusercontent.com/68425462/130067964-29a543b2-003f-4743-adc9-29fc2f1a8bd8.gif)
 
-## Create Comment
-![Comment](https://user-images.githubusercontent.com/68425462/129189992-a20d4f9f-4ac3-4299-84a5-1fea8d6b7da3.gif)
+## Comment
+![comment](https://user-images.githubusercontent.com/68425462/130067906-d7417d47-7179-461a-97c8-ecc0a34b8d22.gif)
 
 ## Create Recipe
-![CreateRecipe](https://user-images.githubusercontent.com/68425462/129190016-6643c93f-38a3-4f86-96aa-c6203d362c8a.gif)
+![createRecipe (1)](https://user-images.githubusercontent.com/68425462/130068779-54f9ee8e-9d60-496f-9e1e-314acb7f30cb.gif)
 
 ## Edit Recipe
-![editRecipe](https://user-images.githubusercontent.com/68425462/129190048-76b9d7fd-02c4-4780-bf54-41daad90075c.gif)
+![editRecipe (1)](https://user-images.githubusercontent.com/68425462/130068007-0b60223e-44dc-4f86-81a9-5e8a94410858.gif)
 
 ## Edit Profile
 ![editProfile](https://user-images.githubusercontent.com/68425462/129190118-b4ac0cc1-edf2-461c-8646-d6eb6d8f71f9.gif)
