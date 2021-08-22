@@ -96,7 +96,9 @@ export default function Login() {
     const { username, password } = getValues();
     login({
       variables: { username, password },
-    });
+    }).catch(() =>
+      setError("result", { message: "서버 불안정으로 로그인에 실패했습니다." })
+    );
   };
   const clearLoginError = () => {
     clearErrors("result");
@@ -137,13 +139,7 @@ export default function Login() {
           />
           <Button type="submit" disabled={!formState.isValid || loading}>
             {loading ? (
-              <Loader
-                type="Circles"
-                color="white"
-                height={20}
-                width={20}
-                timeout={3000}
-              />
+              <Loader type="Circles" color="white" height={20} width={20} />
             ) : (
               "로그인"
             )}

@@ -139,7 +139,9 @@ export default function EditRecipe() {
   const onValid = (data) => {
     id = parseInt(id);
     let tags = parsingTagAndMention("tag", data.tags);
-    editRecipe({ variables: { id, ...data, tags } });
+    editRecipe({ variables: { id, ...data, tags } }).catch(() =>
+      setError("result", { message: "서버 불안정으로 수정에 실패했습니다." })
+    );
   };
   const onPhotoClick = async (e) => {
     const {

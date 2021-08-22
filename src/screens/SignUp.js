@@ -103,7 +103,11 @@ export default function SignUp() {
       variables: {
         ...data,
       },
-    });
+    }).catch(() =>
+      setError("result", {
+        message: "서버 불안정으로 회원가입에 실패했습니다.",
+      })
+    );
   };
   const clearSignUpError = () => {
     clearErrors("result");

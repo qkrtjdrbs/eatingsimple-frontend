@@ -72,7 +72,11 @@ export default function AddRecipe() {
       return;
     }
     let tags = parsingTagAndMention("tag", data.tags);
-    createRecipe({ variables: { ...data, tags } });
+    createRecipe({ variables: { ...data, tags } }).catch(() =>
+      setError("result", {
+        message: "서버 불안정으로 레시피를 올리지 못했습니다.",
+      })
+    );
   };
   const [createRecipe, { loading }] = useMutation(CREATE_RECIPE_MUTATION, {
     onCompleted,
