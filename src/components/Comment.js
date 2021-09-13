@@ -158,7 +158,7 @@ const PayloadBox = styled.div`
 `;
 const BlueText = styled.p`
   color: ${(props) => props.theme.blue};
-  margin-right: 5px;
+  margin: 0px 3px;
 `;
 
 export default function Comment({
